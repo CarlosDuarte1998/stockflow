@@ -76,6 +76,26 @@ resilience4j:
         timeout-duration: 0s
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  endpoint:
+    health:
+      show-details: always
   health:
     circuitbreakers:
       enabled: true
+  info:
+    env:
+      # El contributor "env" no viene habilitado por defecto desde Spring Boot 2.5+;
+      # sin esto /actuator/info no expone las propiedades bajo "info.*".
+      enabled: true
+
+# Namespace leido por el EnvironmentInfoContributor de Actuator para /actuator/info
+# (management.info.app.* no es el prefijo correcto; el contributor busca bajo "info.*").
+info:
+  app:
+    name: inventory-service
+    version: 0.0.1-SNAPSHOT
+    description: Microservicio de monitoreo de inventario para StockFlow Inc.
