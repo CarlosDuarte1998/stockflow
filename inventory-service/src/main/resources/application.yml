@@ -7,6 +7,21 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+    hikari:
+      # Escenario objetivo: carga media, un unico servicio con trafico de dashboard + registro de
+      # movimientos (no picos masivos concurrentes). Valores dimensionados para ese perfil, no defaults.
+      # 10 conexiones cubren con margen los hilos del connector (Tomcat default: 200 threads, pero en
+      # carga media real solo una fraccion pequena hace uso concurrente de la BD al mismo tiempo).
+      maximum-pool-size: 10
+      # Mantener la mitad del pool "caliente" evita el costo de abrir conexiones nuevas en cada rafaga
+      # de trafico sin sobre-reservar recursos cuando el sistema esta en reposo.
+      minimum-idle: 5
+      # Tiempo maximo de espera por una conexion libre antes de fallar rapido (fail-fast) en vez de
+      # colgar la peticion HTTP indefinidamente cuando el pool esta saturado.
+      connection-timeout: 20000
+      # Conexiones ociosas por mas de 5 minutos se liberan; suficiente margen para no descartar
+      # conexiones en cada pausa corta entre peticiones, pero sin retener recursos innecesarios.
+      idle-timeout: 300000
 
   jpa:
     hibernate:
