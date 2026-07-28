@@ -40,3 +40,42 @@ spring:
 
 server:
   port: 8080
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      alertsService:
+        # Ventana de las ultimas 10 llamadas para decidir si el circuito abre.
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        # Si el 50% o mas de esas llamadas fallan, se abre el circuito para dejar de golpear la BD.
+        failure-rate-threshold: 50
+        # Tiempo que el circuito permanece abierto antes de probar de nuevo en estado half-open.
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+
+  retry:
+    instances:
+      movementRegistration:
+        # Maximo 3 intentos (1 original + 2 reintentos) segun lo pedido en la prueba.
+        max-attempts: 3
+        # Espera exponencial: 500ms, 1000ms, entre reintentos para no saturar la BD ante fallos transitorios.
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+  ratelimiter:
+    instances:
+      movementHistory:
+        # Maximo 10 peticiones por segundo al historial para proteger la base de datos de sobrecarga.
+        limit-for-period: 10
+        limit-refresh-period: 1s
+        # No hacer esperar al cliente: si se supera el limite, falla inmediato con 429.
+        timeout-duration: 0s
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
