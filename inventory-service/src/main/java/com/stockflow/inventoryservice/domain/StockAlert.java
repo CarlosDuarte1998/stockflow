@@ -1,6 +1,7 @@
 package com.stockflow.inventoryservice.domain;
 
 import com.stockflow.inventoryservice.domain.enums.AlertSeverity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(description = "Alerta de stock bajo o critico para un producto")
 public class StockAlert {
 
     private Long productId;

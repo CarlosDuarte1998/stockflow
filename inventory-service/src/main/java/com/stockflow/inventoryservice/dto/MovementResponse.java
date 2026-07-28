@@ -2,6 +2,7 @@ package com.stockflow.inventoryservice.dto;
 
 import com.stockflow.inventoryservice.domain.Movement;
 import com.stockflow.inventoryservice.domain.enums.MovementType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Movimiento de inventario registrado")
 public class MovementResponse {
 
     private Long id;

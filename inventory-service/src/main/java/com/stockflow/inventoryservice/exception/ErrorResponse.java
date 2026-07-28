@@ -1,5 +1,6 @@
 package com.stockflow.inventoryservice.exception;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Estructura consistente de error retornada por la API")
 public class ErrorResponse {
 
     private Instant timestamp;
