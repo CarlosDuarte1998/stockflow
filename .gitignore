@@ -1,0 +1,22 @@
+# --- Java / Maven (inventory-service) ---
+inventory-service/target/
+inventory-service/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# --- Node / Angular (inventory-app) ---
+inventory-app/node_modules/
+inventory-app/dist/
+inventory-app/.angular/
+npm-debug.log*
+
+# --- IDE ---
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
