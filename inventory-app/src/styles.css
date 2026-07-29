@@ -1,0 +1,11 @@
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@import "tailwindcss/theme.css" layer(tailwind-base);
+@import "tailwindcss/utilities.css" layer(tailwind-utilities);
+@import "primeicons/primeicons.css";
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
