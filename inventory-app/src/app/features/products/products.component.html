@@ -12,80 +12,74 @@
     />
   </div>
 
-  @if (store.loading()) {
-    <div class="flex flex-col gap-2">
-      <p-skeleton height="2.5rem" />
-      <p-skeleton height="2.5rem" />
-      <p-skeleton height="2.5rem" />
-    </div>
-  } @else {
-    <p-table
-      [value]="store.products()"
-      [paginator]="true"
-      [rows]="10"
-      [totalRecords]="store.totalElements()"
-      [lazy]="true"
-      (onLazyLoad)="onPageChange($event)"
-      dataKey="id"
-    >
-      <ng-template #header>
-        <tr>
-          <th>SKU</th>
-          <th>Nombre</th>
-          <th>Categoria</th>
-          <th>Stock actual</th>
-          <th>Stock minimo</th>
-          <th>Precio unitario</th>
-          <th>Estado</th>
-          <th>Historial</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-product>
-        <tr>
-          <td>{{ product.sku }}</td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.category }}</td>
-          <td>{{ product.currentStock }}</td>
-          <td>{{ product.minStock }}</td>
-          <td>{{ product.unitPrice | currency }}</td>
-          <td>
-            <p-tag [severity]="severityOf(product)" [value]="statusOf(product)" />
-          </td>
-          <td>
-            <button
-              pButton
-              #historyTrigger
-              type="button"
-              [outlined]="true"
-              size="small"
-              [label]="expandedProductId === product.id ? 'Ocultar' : 'Ver historial'"
-              (click)="toggleHistory(product)"
-            ></button>
-          </td>
-        </tr>
-        <tr [class.hidden]="expandedProductId !== product.id">
-          <td colspan="8" class="bg-surface-50">
-            @defer (on interaction(historyTrigger)) {
-              <app-movement-history [productId]="product.id" />
-            } @placeholder {
-              <p class="text-sm text-surface-400 italic p-2">
-                Haz clic en "Ver historial" para cargar los movimientos de este producto.
-              </p>
-            } @loading (minimum 300ms) {
-              <div class="p-2"><p-skeleton height="3rem" /></div>
-            } @error {
-              <p class="text-red-600 text-sm p-2">No se pudo cargar el historial de movimientos.</p>
-            }
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template #emptymessage>
-        <tr>
-          <td colspan="8" class="text-center text-surface-500 py-4">No hay productos para mostrar.</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  }
+  <p-table
+    [value]="store.products()"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="store.totalElements()"
+    [lazy]="true"
+    [loading]="store.loading()"
+    [first]="store.page() * 10"
+    (onLazyLoad)="onPageChange($event)"
+    dataKey="id"
+  >
+    <ng-template #header>
+      <tr>
+        <th>SKU</th>
+        <th>Nombre</th>
+        <th>Categoria</th>
+        <th>Stock actual</th>
+        <th>Stock minimo</th>
+        <th>Precio unitario</th>
+        <th>Estado</th>
+        <th>Historial</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-product>
+      <tr>
+        <td>{{ product.sku }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.category }}</td>
+        <td>{{ product.currentStock }}</td>
+        <td>{{ product.minStock }}</td>
+        <td>{{ product.unitPrice | currency }}</td>
+        <td>
+          <p-tag [severity]="severityOf(product)" [value]="statusOf(product)" />
+        </td>
+        <td>
+          <button
+            pButton
+            #historyTrigger
+            type="button"
+            [outlined]="true"
+            size="small"
+            [label]="expandedProductId === product.id ? 'Ocultar' : 'Ver historial'"
+            (click)="toggleHistory(product)"
+          ></button>
+        </td>
+      </tr>
+      <tr [class.hidden]="expandedProductId !== product.id">
+        <td colspan="8" class="bg-surface-50">
+          @defer (on interaction(historyTrigger)) {
+            <app-movement-history [productId]="product.id" />
+          } @placeholder {
+            <p class="text-sm text-surface-400 italic p-2">
+              Haz clic en "Ver historial" para cargar los movimientos de este producto.
+            </p>
+          } @loading (minimum 300ms) {
+            <div class="p-2"><p-skeleton height="3rem" /></div>
+          } @error {
+            <p class="text-red-600 text-sm p-2">No se pudo cargar el historial de movimientos.</p>
+          }
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="8" class="text-center text-surface-500 py-4">No hay productos para mostrar.</td>
+      </tr>
+    </ng-template>
+  </p-table>
 
   @if (store.error()) {
     <p class="text-red-600">{{ store.error() }}</p>

@@ -37,13 +37,27 @@ export class ProductsComponent implements OnInit {
   protected expandedProductId: number | null = null;
 
   ngOnInit(): void {
-    this.store.loadProducts(0, 10);
+    // p-table con [lazy]="true" dispara (onLazyLoad) automaticamente al inicializarse,
+    // por lo que no es necesario (ni conviene) disparar una carga adicional aqui: hacerlo
+    // duplicaria la peticion inicial y, combinado con el binding de [value]/[totalRecords]
+    // a signals (nuevas referencias de array en cada emision), puede hacer que PrimeNG
+    // reinterprete el cambio como un nuevo estado de paginacion y reemita onLazyLoad
+    // indefinidamente.
   }
 
   onPageChange(event: TableLazyLoadEvent): void {
-    const page = Math.floor((event.first ?? 0) / (event.rows ?? 10));
-    this.store.loadProducts(page, event.rows ?? 10);
+    const rows = event.rows ?? 10;
+    const page = Math.floor((event.first ?? 0) / rows);
+
+    if (page === this.store.page() && rows === this.lastRows) {
+      return;
+    }
+
+    this.lastRows = rows;
+    this.store.loadProducts(page, rows);
   }
+
+  private lastRows = 10;
 
   onCategoryChange(category: string | null): void {
     this.store.setCategoryFilter(category);
