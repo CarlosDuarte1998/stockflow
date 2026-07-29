@@ -1,0 +1,30 @@
+<div class="p-6 flex flex-col gap-4">
+  <h1 class="text-2xl font-semibold text-surface-900">Alertas de inventario</h1>
+
+  @if (store.alerts().length === 0) {
+    <p class="text-surface-500">No hay alertas activas. Todo el inventario esta por encima del minimo.</p>
+  } @else {
+    <ul class="flex flex-col gap-3">
+      @for (alert of store.alerts(); track alert.productId) {
+        <li
+          class="flex items-center justify-between rounded-lg border p-4"
+          [class.border-red-400]="alert.severity === 'CRITICAL'"
+          [class.bg-red-50]="alert.severity === 'CRITICAL'"
+          [class.border-amber-300]="alert.severity === 'LOW'"
+          [class.bg-amber-50]="alert.severity === 'LOW'"
+        >
+          <div class="flex flex-col">
+            <span class="font-semibold text-surface-900">{{ alert.productName }}</span>
+            <span class="text-sm text-surface-500">
+              Stock actual: {{ alert.currentStock }} / minimo: {{ alert.minStock }}
+            </span>
+          </div>
+          <p-tag
+            [severity]="alert.severity === 'CRITICAL' ? 'danger' : 'warn'"
+            [value]="alert.severity === 'CRITICAL' ? 'CRITICO' : 'BAJO'"
+          />
+        </li>
+      }
+    </ul>
+  }
+</div>

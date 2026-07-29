@@ -1,0 +1,19 @@
+<div class="flex flex-col gap-4">
+  <h2 class="text-xl font-semibold text-surface-900">Estadisticas avanzadas</h2>
+
+  <p class="text-surface-600">
+    Stock promedio por producto: <span class="font-semibold">{{ averageStockPerProduct() | number: '1.1-1' }}</span>
+  </p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (item of breakdown(); track item.category) {
+      <p-card [header]="item.category">
+        <div class="flex flex-col gap-1 text-sm">
+          <span>Productos: {{ item.productCount }}</span>
+          <span>Unidades en stock: {{ item.totalStock }}</span>
+          <span>Valor: {{ item.totalValue | currency }}</span>
+        </div>
+      </p-card>
+    }
+  </div>
+</div>

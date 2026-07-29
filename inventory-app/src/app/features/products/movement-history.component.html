@@ -1,0 +1,18 @@
+@if (loading) {
+  <p class="text-surface-500 text-sm">Cargando historial...</p>
+} @else if (loadError) {
+  <p class="text-red-600 text-sm">No se pudo cargar el historial de movimientos.</p>
+} @else if (movements.length === 0) {
+  <p class="text-surface-500 text-sm">Este producto no tiene movimientos registrados.</p>
+} @else {
+  <ul class="flex flex-col gap-2">
+    @for (movement of movements; track movement.id) {
+      <li class="flex items-center justify-between text-sm border-b border-surface-200 py-2">
+        <p-tag [severity]="movement.type === 'IN' ? 'success' : 'danger'" [value]="movement.type" />
+        <span>{{ movement.quantity }} unidades</span>
+        <span class="text-surface-500">{{ movement.reason || 'Sin motivo' }}</span>
+        <span class="text-surface-400">{{ movement.timestamp | date: 'short' }}</span>
+      </li>
+    }
+  </ul>
+}

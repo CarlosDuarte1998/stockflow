@@ -1,0 +1,62 @@
+<div class="p-6 flex flex-col gap-6">
+  <h1 class="text-2xl font-semibold text-surface-900">Dashboard de inventario</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <p-card styleClass="border-l-4 border-blue-500">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-surface-500">Total de productos</span>
+        <span class="text-3xl font-bold">{{ store.totalProducts() }}</span>
+      </div>
+    </p-card>
+
+    <p-card styleClass="border-l-4 border-amber-500">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-surface-500">Alertas activas</span>
+        <span class="text-3xl font-bold">{{ store.totalAlerts() }}</span>
+      </div>
+    </p-card>
+
+    <p-card styleClass="border-l-4 border-red-500">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-surface-500">Alertas criticas</span>
+        <span class="text-3xl font-bold">{{ store.totalCriticalAlerts() }}</span>
+      </div>
+    </p-card>
+
+    <p-card styleClass="border-l-4 border-green-500">
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-surface-500">Valor total de inventario</span>
+        <span class="text-3xl font-bold">{{ store.totalInventoryValue() | currency }}</span>
+      </div>
+    </p-card>
+  </div>
+
+  @if (store.loading()) {
+    <p class="text-surface-500">Cargando productos...</p>
+  }
+
+  @if (store.error()) {
+    <p class="text-red-600">{{ store.error() }}</p>
+  }
+
+  <div class="min-h-[10rem]">
+    @defer (on viewport) {
+      <app-advanced-stats />
+    } @placeholder {
+      <div class="flex flex-col gap-2">
+        <p-skeleton height="1.5rem" width="14rem" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <p-skeleton height="6rem" />
+          <p-skeleton height="6rem" />
+          <p-skeleton height="6rem" />
+        </div>
+      </div>
+    } @loading (minimum 300ms) {
+      <div class="flex justify-center py-8">
+        <p-progressSpinner styleClass="w-10 h-10" />
+      </div>
+    } @error {
+      <p class="text-red-600">No se pudieron cargar las estadisticas avanzadas.</p>
+    }
+  </div>
+</div>

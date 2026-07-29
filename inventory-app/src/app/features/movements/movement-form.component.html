@@ -1,0 +1,44 @@
+<div class="p-6 max-w-lg">
+  <h1 class="text-2xl font-semibold text-surface-900 mb-4">Registrar movimiento</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+    <div class="flex flex-col gap-1">
+      <label for="productId" class="text-sm font-medium text-surface-700">ID del producto</label>
+      <p-inputNumber
+        inputId="productId"
+        formControlName="productId"
+        [showButtons]="false"
+        [useGrouping]="false"
+      />
+      @if (form.controls.productId.invalid && form.controls.productId.touched) {
+        <span class="text-red-600 text-xs">El id del producto es obligatorio.</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="type" class="text-sm font-medium text-surface-700">Tipo de movimiento</label>
+      <p-select inputId="type" [options]="types" optionLabel="label" optionValue="value" formControlName="type" />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="quantity" class="text-sm font-medium text-surface-700">Cantidad</label>
+      <p-inputNumber inputId="quantity" formControlName="quantity" [showButtons]="false" [useGrouping]="false" />
+      @if (form.controls.quantity.invalid && form.controls.quantity.touched) {
+        <span class="text-red-600 text-xs">La cantidad debe ser mayor a 0.</span>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="reason" class="text-sm font-medium text-surface-700">Motivo</label>
+      <input id="reason" type="text" pInputText formControlName="reason" placeholder="Ej. Venta a cliente" />
+    </div>
+
+    <button
+      pButton
+      type="submit"
+      label="Registrar movimiento"
+      [loading]="submitting()"
+      [disabled]="submitting() || form.invalid"
+    ></button>
+  </form>
+</div>
