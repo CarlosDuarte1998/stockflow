@@ -11,17 +11,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.method.HandlerMethod;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Cubre solo los casos que InventoryFlowIntegrationTest NO ejercita por HTTP real
+ * (429 y 503 no se disparan facilmente end-to-end, y 500 generico tampoco). Los casos
+ * 404/422/400 ya quedan probados de punta a punta en el test de integracion, asi que
+ * no se duplican aqui.
+ */
 @ExtendWith(MockitoExtension.class)
 class GlobalExceptionHandlerTest {
 
@@ -34,38 +33,6 @@ class GlobalExceptionHandlerTest {
     void setUp() {
         manejador = new GlobalExceptionHandler();
         when(peticion.getRequestURI()).thenReturn("/api/v1/products/99");
-    }
-
-    @Test
-    void manejaProductoNoEncontradoComo404() {
-        ResponseEntity<ErrorResponse> respuesta = manejador.manejarProductoNoEncontrado(new ProductNotFoundException(99L), peticion);
-
-        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(respuesta.getBody().getStatus()).isEqualTo(404);
-        assertThat(respuesta.getBody().getPath()).isEqualTo("/api/v1/products/99");
-    }
-
-    @Test
-    void manejaStockInsuficienteComo422() {
-        ResponseEntity<ErrorResponse> respuesta = manejador.manejarStockInsuficiente(
-                new InsufficientStockException(1L, 3, 10), peticion);
-
-        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(respuesta.getBody().getMessage()).contains("disponible=3");
-    }
-
-    @Test
-    void manejaErroresDeValidacionComo400() {
-        BindingResult bindingResult = mock(BindingResult.class);
-        FieldError fieldError = new FieldError("movementRequest", "quantity", "quantity debe ser mayor a 0");
-        when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
-        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(
-                mock(org.springframework.core.MethodParameter.class), bindingResult);
-
-        ResponseEntity<ErrorResponse> respuesta = manejador.manejarValidacion(ex, peticion);
-
-        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(respuesta.getBody().getMessage()).contains("quantity debe ser mayor a 0");
     }
 
     @Test

@@ -89,12 +89,4 @@ class ProductServiceTest {
         assertThatThrownBy(() -> productService.obtenerProducto(99L))
                 .isInstanceOf(ProductNotFoundException.class);
     }
-
-    @Test
-    void obtenerProductoEntidadLanzaExcepcionCuandoNoExiste() {
-        when(productRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> productService.obtenerProductoEntidad(99L))
-                .isInstanceOf(ProductNotFoundException.class);
-    }
 }

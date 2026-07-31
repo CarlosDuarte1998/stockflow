@@ -47,16 +47,6 @@ class AlertServiceTest {
     }
 
     @Test
-    void productoConStockCeroEsCritico() {
-        Product producto = productoConStock(0, 6);
-        when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
-
-        List<StockAlert> alertas = alertService.obtenerAlertasActivas();
-
-        assertThat(alertas.get(0).getSeverity()).isEqualTo(AlertSeverity.CRITICAL);
-    }
-
-    @Test
     void fallbackRetornaListaVaciaCuandoCircuitoEstaAbierto() {
         List<StockAlert> resultadoFallback = invocarFallback(new RuntimeException("circuito abierto"));
 

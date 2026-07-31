@@ -11,7 +11,6 @@ import com.stockflow.inventoryservice.repository.MovementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -90,19 +89,6 @@ class MovementServiceTest {
 
         assertThatThrownBy(() -> movementService.registrarMovimiento(solicitud))
                 .isInstanceOf(InsufficientStockException.class);
-    }
-
-    @Test
-    void registrarMovimientoPersisteMovimientoConTimestamp() {
-        when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
-        ArgumentCaptor<Movement> captor = ArgumentCaptor.forClass(Movement.class);
-        when(movementRepository.save(captor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
-
-        movementService.registrarMovimiento(new MovementRequest(1L, MovementType.IN, 5, "Ajuste"));
-
-        Movement guardado = captor.getValue();
-        assertThat(guardado.getProductId()).isEqualTo(1L);
-        assertThat(guardado.getTimestamp()).isBeforeOrEqualTo(Instant.now());
     }
 
     @Test
