@@ -1,12 +1,12 @@
 package com.stockflow.inventoryservice.controller;
 
+import com.stockflow.inventoryservice.dto.PagedResponse;
 import com.stockflow.inventoryservice.dto.ProductResponse;
 import com.stockflow.inventoryservice.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,10 +29,10 @@ public class ProductController {
     @GetMapping
     @Operation(summary = "Listar productos con paginacion y filtro opcional por categoria")
     @ApiResponse(responseCode = "200", description = "Pagina de productos")
-    public ResponseEntity<Page<ProductResponse>> listProducts(
+    public ResponseEntity<PagedResponse<ProductResponse>> listProducts(
             @Parameter(description = "Filtro opcional por categoria") @RequestParam(required = false) String category,
             Pageable pageable) {
-        return ResponseEntity.ok(productService.listProducts(category, pageable));
+        return ResponseEntity.ok(PagedResponse.from(productService.listProducts(category, pageable)));
     }
 
     @GetMapping("/{id}")
