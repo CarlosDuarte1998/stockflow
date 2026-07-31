@@ -14,13 +14,13 @@ public record PagedResponse<T>(
         @Schema(example = "2") int totalPages
 ) {
 
-    public static <T> PagedResponse<T> from(Page<T> page) {
+    public static <T> PagedResponse<T> desde(Page<T> pagina) {
         return new PagedResponse<>(
-                page.getContent(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements(),
-                page.getTotalPages()
+                pagina.getContent(),
+                pagina.getNumber(),
+                pagina.getSize(),
+                pagina.getTotalElements(),
+                pagina.getTotalPages()
         );
     }
 }

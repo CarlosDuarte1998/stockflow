@@ -7,7 +7,7 @@ import { AlertService } from '../services/alert.service';
 import { ProductService } from '../services/product.service';
 import { DEFAULT_FILTERS, FILTERS_STORAGE_KEY, InventoryFilters } from './inventory-filters.model';
 
-function loadPersistedFilters(): InventoryFilters {
+function cargarFiltrosPersistidos(): InventoryFilters {
   try {
     const raw = localStorage.getItem(FILTERS_STORAGE_KEY);
     return raw ? { ...DEFAULT_FILTERS, ...JSON.parse(raw) } : DEFAULT_FILTERS;
@@ -32,7 +32,7 @@ export class InventoryStore {
   private readonly _selectedProduct = signal<Product | null>(null);
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
-  private readonly _filters = signal<InventoryFilters>(loadPersistedFilters());
+  private readonly _filters = signal<InventoryFilters>(cargarFiltrosPersistidos());
   private readonly _totalElements = signal(0);
   private readonly _totalPages = signal(0);
   private readonly _page = signal(0);
@@ -53,7 +53,7 @@ export class InventoryStore {
     () => this._alerts().filter((alert) => alert.severity === 'CRITICAL').length
   );
   readonly totalInventoryValue = computed(() =>
-    this._products().reduce((sum, product) => sum + product.currentStock * product.unitPrice, 0)
+    this._products().reduce((suma, producto) => suma + producto.currentStock * producto.unitPrice, 0)
   );
 
   constructor() {
@@ -64,30 +64,30 @@ export class InventoryStore {
 
     // Notificar via toast cuando cambia la lista de alertas activas (nuevas alertas detectadas).
     effect(() => {
-      const alerts = this._alerts();
-      if (alerts.length > 0) {
-        const critical = alerts.filter((alert) => alert.severity === 'CRITICAL').length;
+      const alertas = this._alerts();
+      if (alertas.length > 0) {
+        const criticas = alertas.filter((alerta) => alerta.severity === 'CRITICAL').length;
         this.messageService.add({
-          severity: critical > 0 ? 'error' : 'warn',
+          severity: criticas > 0 ? 'error' : 'warn',
           summary: 'Alertas de inventario',
-          detail: `${alerts.length} producto(s) con stock bajo (${critical} critico(s))`,
+          detail: `${alertas.length} producto(s) con stock bajo (${criticas} critico(s))`,
           life: 4000
         });
       }
     });
   }
 
-  loadProducts(page = 0, size = 10): void {
+  cargarProductos(pagina = 0, tamano = 10): void {
     this._loading.set(true);
     this._error.set(null);
-    const category = this._filters().category ?? undefined;
+    const categoria = this._filters().category ?? undefined;
 
-    this.productService.list(page, size, category).subscribe({
-      next: (result) => {
-        this._products.set(result.content);
-        this._totalElements.set(result.totalElements);
-        this._totalPages.set(result.totalPages);
-        this._page.set(result.number);
+    this.productService.listar(pagina, tamano, categoria).subscribe({
+      next: (resultado) => {
+        this._products.set(resultado.content);
+        this._totalElements.set(resultado.totalElements);
+        this._totalPages.set(resultado.totalPages);
+        this._page.set(resultado.number);
         this._loading.set(false);
       },
       error: (err) => {
@@ -97,24 +97,24 @@ export class InventoryStore {
     });
   }
 
-  loadAlerts(): void {
-    this.alertService.list().subscribe({
-      next: (alerts) => this._alerts.set(alerts),
+  cargarAlertas(): void {
+    this.alertService.listar().subscribe({
+      next: (alertas) => this._alerts.set(alertas),
       error: (err) => this._error.set(err?.error?.message ?? 'Error al cargar alertas')
     });
   }
 
-  selectProduct(product: Product | null): void {
-    this._selectedProduct.set(product);
+  seleccionarProducto(producto: Product | null): void {
+    this._selectedProduct.set(producto);
   }
 
-  setCategoryFilter(category: string | null): void {
-    this._filters.set({ ...this._filters(), category });
-    this.loadProducts(0, this._products().length || 10);
+  establecerFiltroCategoria(categoria: string | null): void {
+    this._filters.set({ ...this._filters(), category: categoria });
+    this.cargarProductos(0, this._products().length || 10);
   }
 
-  refreshAfterMovement(): void {
-    this.loadProducts(this._page(), 10);
-    this.loadAlerts();
+  refrescarTrasMovimiento(): void {
+    this.cargarProductos(this._page(), 10);
+    this.cargarAlertas();
   }
 }

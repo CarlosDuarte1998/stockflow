@@ -31,15 +31,15 @@ public class ProductResponse {
     @Schema(example = "12.99")
     private BigDecimal unitPrice;
 
-    public static ProductResponse fromEntity(Product product) {
+    public static ProductResponse desdeEntidad(Product producto) {
         return ProductResponse.builder()
-                .id(product.getId())
-                .sku(product.getSku())
-                .name(product.getName())
-                .category(product.getCategory())
-                .currentStock(product.getCurrentStock())
-                .minStock(product.getMinStock())
-                .unitPrice(product.getUnitPrice())
+                .id(producto.getId())
+                .sku(producto.getSku())
+                .name(producto.getName())
+                .category(producto.getCategory())
+                .currentStock(producto.getCurrentStock())
+                .minStock(producto.getMinStock())
+                .unitPrice(producto.getUnitPrice())
                 .build();
     }
 }

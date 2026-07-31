@@ -27,24 +27,24 @@ public class CriticalStockHealthIndicator implements HealthIndicator {
 
     @Override
     public Health health() {
-        List<Product> products = productRepository.findAll();
+        List<Product> productos = productRepository.findAll();
 
-        if (products.isEmpty()) {
+        if (productos.isEmpty()) {
             return Health.unknown().withDetail("reason", "No hay productos registrados").build();
         }
 
-        long criticalCount = products.stream()
+        long conteoCritico = productos.stream()
                 .filter(p -> p.getCurrentStock() <= p.getMinStock() * CRITICAL_THRESHOLD_RATIO)
                 .count();
 
-        double percentage = (criticalCount * 100.0) / products.size();
+        double porcentaje = (conteoCritico * 100.0) / productos.size();
 
-        Health.Builder builder = percentage > UNHEALTHY_PRODUCT_PERCENTAGE ? Health.down() : Health.up();
+        Health.Builder constructorSalud = porcentaje > UNHEALTHY_PRODUCT_PERCENTAGE ? Health.down() : Health.up();
 
-        return builder
-                .withDetail("criticalProducts", criticalCount)
-                .withDetail("totalProducts", products.size())
-                .withDetail("criticalPercentage", String.format("%.2f%%", percentage))
+        return constructorSalud
+                .withDetail("criticalProducts", conteoCritico)
+                .withDetail("totalProducts", productos.size())
+                .withDetail("criticalPercentage", String.format("%.2f%%", porcentaje))
                 .withDetail("threshold", UNHEALTHY_PRODUCT_PERCENTAGE + "%")
                 .build();
     }

@@ -7,17 +7,17 @@ import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 
-import { Product, StockStatus, stockStatusOf } from '../../core/models/product.model';
+import { Product, StockStatus, estadoStockDe } from '../../core/models/product.model';
 import { InventoryStore } from '../../core/store/inventory.store';
 import { MovementHistoryComponent } from './movement-history.component';
 
-const STATUS_SEVERITY: Record<StockStatus, 'success' | 'warn' | 'danger'> = {
+const SEVERIDAD_POR_ESTADO: Record<StockStatus, 'success' | 'warn' | 'danger'> = {
   OK: 'success',
   BAJO: 'warn',
   CRITICO: 'danger'
 };
 
-const STATUS_ICON: Record<StockStatus, string> = {
+const ICONO_POR_ESTADO: Record<StockStatus, string> = {
   OK: 'pi pi-check',
   BAJO: 'pi pi-exclamation-circle',
   CRITICO: 'pi pi-times-circle'
@@ -42,44 +42,44 @@ export class ProductsComponent implements OnInit {
 
   protected expandedProductId: number | null = null;
 
+  private lastRows = 10;
+
   ngOnInit(): void {
-    this.store.loadProducts(0, this.lastRows);
+    this.store.cargarProductos(0, this.lastRows);
   }
 
-  onPageChange(event: TableLazyLoadEvent): void {
-    const rows = event.rows ?? 10;
-    const page = Math.floor((event.first ?? 0) / rows);
+  alCambiarPagina(event: TableLazyLoadEvent): void {
+    const filas = event.rows ?? 10;
+    const pagina = Math.floor((event.first ?? 0) / filas);
 
     // Evita recargas redundantes si p-table reemite onLazyLoad para el mismo estado
     // de paginacion ya cargado (por ejemplo, al inicializarse tras la carga de ngOnInit).
-    if (page === this.store.page() && rows === this.lastRows) {
+    if (pagina === this.store.page() && filas === this.lastRows) {
       return;
     }
 
-    this.lastRows = rows;
-    this.store.loadProducts(page, rows);
+    this.lastRows = filas;
+    this.store.cargarProductos(pagina, filas);
   }
 
-  private lastRows = 10;
-
-  onCategoryChange(category: string | null): void {
-    this.store.setCategoryFilter(category);
+  alCambiarCategoria(categoria: string | null): void {
+    this.store.establecerFiltroCategoria(categoria);
   }
 
-  toggleHistory(product: Product): void {
-    this.expandedProductId = this.expandedProductId === product.id ? null : product.id;
-    this.store.selectProduct(product);
+  alternarHistorial(producto: Product): void {
+    this.expandedProductId = this.expandedProductId === producto.id ? null : producto.id;
+    this.store.seleccionarProducto(producto);
   }
 
-  statusOf(product: Product): StockStatus {
-    return stockStatusOf(product);
+  estadoDe(producto: Product): StockStatus {
+    return estadoStockDe(producto);
   }
 
-  severityOf(product: Product) {
-    return STATUS_SEVERITY[this.statusOf(product)];
+  severidadDe(producto: Product) {
+    return SEVERIDAD_POR_ESTADO[this.estadoDe(producto)];
   }
 
-  iconOf(product: Product): string {
-    return STATUS_ICON[this.statusOf(product)];
+  iconoDe(producto: Product): string {
+    return ICONO_POR_ESTADO[this.estadoDe(producto)];
   }
 }

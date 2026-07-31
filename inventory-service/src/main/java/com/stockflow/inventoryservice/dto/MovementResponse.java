@@ -24,14 +24,14 @@ public class MovementResponse {
     private String reason;
     private Instant timestamp;
 
-    public static MovementResponse fromEntity(Movement movement) {
+    public static MovementResponse desdeEntidad(Movement movimiento) {
         return MovementResponse.builder()
-                .id(movement.getId())
-                .productId(movement.getProductId())
-                .type(movement.getType())
-                .quantity(movement.getQuantity())
-                .reason(movement.getReason())
-                .timestamp(movement.getTimestamp())
+                .id(movimiento.getId())
+                .productId(movimiento.getProductId())
+                .type(movimiento.getType())
+                .quantity(movimiento.getQuantity())
+                .reason(movimiento.getReason())
+                .timestamp(movimiento.getTimestamp())
                 .build();
     }
 }

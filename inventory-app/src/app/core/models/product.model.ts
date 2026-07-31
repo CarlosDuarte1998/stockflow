@@ -10,11 +10,11 @@ export interface Product {
 
 export type StockStatus = 'OK' | 'BAJO' | 'CRITICO';
 
-export function stockStatusOf(product: Pick<Product, 'currentStock' | 'minStock'>): StockStatus {
-  if (product.currentStock <= product.minStock * 0.5) {
+export function estadoStockDe(producto: Pick<Product, 'currentStock' | 'minStock'>): StockStatus {
+  if (producto.currentStock <= producto.minStock * 0.5) {
     return 'CRITICO';
   }
-  if (product.currentStock <= product.minStock) {
+  if (producto.currentStock <= producto.minStock) {
     return 'BAJO';
   }
   return 'OK';

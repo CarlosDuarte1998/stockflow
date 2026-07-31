@@ -10,7 +10,7 @@ export class AlertService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/alerts`;
 
-  list(): Observable<StockAlert[]> {
+  listar(): Observable<StockAlert[]> {
     return this.http.get<StockAlert[]>(this.baseUrl);
   }
 }

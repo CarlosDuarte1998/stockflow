@@ -10,11 +10,11 @@ export class MovementService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/movements`;
 
-  register(request: MovementRequest): Observable<Movement> {
-    return this.http.post<Movement>(this.baseUrl, request);
+  registrar(solicitud: MovementRequest): Observable<Movement> {
+    return this.http.post<Movement>(this.baseUrl, solicitud);
   }
 
-  history(productId: number): Observable<Movement[]> {
-    return this.http.get<Movement[]>(`${this.baseUrl}/${productId}/history`);
+  historial(idProducto: number): Observable<Movement[]> {
+    return this.http.get<Movement[]>(`${this.baseUrl}/${idProducto}/history`);
   }
 }

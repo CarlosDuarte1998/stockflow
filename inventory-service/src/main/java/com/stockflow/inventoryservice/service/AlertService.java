@@ -25,31 +25,31 @@ public class AlertService {
         this.productRepository = productRepository;
     }
 
-    @CircuitBreaker(name = "alertsService", fallbackMethod = "getActiveAlertsFallback")
-    public List<StockAlert> getActiveAlerts() {
-        return productRepository.findProductsBelowMinimumStock().stream()
-                .map(this::toStockAlert)
+    @CircuitBreaker(name = "alertsService", fallbackMethod = "obtenerAlertasActivasFallback")
+    public List<StockAlert> obtenerAlertasActivas() {
+        return productRepository.obtenerProductosBajoStockMinimo().stream()
+                .map(this::convertirAStockAlert)
                 .toList();
     }
 
     @SuppressWarnings("unused")
-    private List<StockAlert> getActiveAlertsFallback(Throwable throwable) {
+    private List<StockAlert> obtenerAlertasActivasFallback(Throwable causa) {
         log.warn("Circuit breaker abierto para el servicio de alertas, retornando lista vacia. Causa: {}",
-                throwable.getMessage());
+                causa.getMessage());
         return List.of();
     }
 
-    private StockAlert toStockAlert(Product product) {
-        AlertSeverity severity = product.getCurrentStock() <= product.getMinStock() * CRITICAL_THRESHOLD_RATIO
+    private StockAlert convertirAStockAlert(Product producto) {
+        AlertSeverity severidad = producto.getCurrentStock() <= producto.getMinStock() * CRITICAL_THRESHOLD_RATIO
                 ? AlertSeverity.CRITICAL
                 : AlertSeverity.LOW;
 
         return StockAlert.builder()
-                .productId(product.getId())
-                .productName(product.getName())
-                .currentStock(product.getCurrentStock())
-                .minStock(product.getMinStock())
-                .severity(severity)
+                .productId(producto.getId())
+                .productName(producto.getName())
+                .currentStock(producto.getCurrentStock())
+                .minStock(producto.getMinStock())
+                .severity(severidad)
                 .build();
     }
 }

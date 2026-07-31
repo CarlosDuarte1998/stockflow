@@ -36,12 +36,12 @@ class MovementServiceTest {
 
     private MovementService movementService;
 
-    private Product product;
+    private Product producto;
 
     @BeforeEach
     void setUp() {
         movementService = new MovementService(movementRepository, productService);
-        product = Product.builder()
+        producto = Product.builder()
                 .id(1L)
                 .sku("ELEC-003")
                 .name("Monitor 24\"")
@@ -54,76 +54,76 @@ class MovementServiceTest {
 
     @Test
     void registerMovementInIncreasesStock() {
-        when(productService.getProductEntity(1L)).thenReturn(product);
+        when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         when(movementRepository.save(any(Movement.class))).thenAnswer(invocation -> {
             Movement m = invocation.getArgument(0);
             m.setId(1L);
             return m;
         });
 
-        MovementRequest request = new MovementRequest(1L, MovementType.IN, 10, "Reabastecimiento");
-        MovementResponse response = movementService.registerMovement(request);
+        MovementRequest solicitud = new MovementRequest(1L, MovementType.IN, 10, "Reabastecimiento");
+        MovementResponse respuesta = movementService.registrarMovimiento(solicitud);
 
-        assertThat(product.getCurrentStock()).isEqualTo(25);
-        assertThat(response.getType()).isEqualTo(MovementType.IN);
-        assertThat(response.getQuantity()).isEqualTo(10);
+        assertThat(producto.getCurrentStock()).isEqualTo(25);
+        assertThat(respuesta.getType()).isEqualTo(MovementType.IN);
+        assertThat(respuesta.getQuantity()).isEqualTo(10);
     }
 
     @Test
     void registerMovementOutDecreasesStockAndCanTriggerAlertCondition() {
-        when(productService.getProductEntity(1L)).thenReturn(product);
+        when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         when(movementRepository.save(any(Movement.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        MovementRequest request = new MovementRequest(1L, MovementType.OUT, 12, "Venta");
-        movementService.registerMovement(request);
+        MovementRequest solicitud = new MovementRequest(1L, MovementType.OUT, 12, "Venta");
+        movementService.registrarMovimiento(solicitud);
 
         // 15 - 12 = 3, que es <= minStock (5): el flujo de negocio principal a validar.
-        assertThat(product.getCurrentStock()).isEqualTo(3);
-        assertThat(product.isBelowMinimum()).isTrue();
+        assertThat(producto.getCurrentStock()).isEqualTo(3);
+        assertThat(producto.isBelowMinimum()).isTrue();
     }
 
     @Test
     void registerMovementOutWithInsufficientStockThrows() {
-        when(productService.getProductEntity(1L)).thenReturn(product);
+        when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
 
-        MovementRequest request = new MovementRequest(1L, MovementType.OUT, 999, "Venta");
+        MovementRequest solicitud = new MovementRequest(1L, MovementType.OUT, 999, "Venta");
 
-        assertThatThrownBy(() -> movementService.registerMovement(request))
+        assertThatThrownBy(() -> movementService.registrarMovimiento(solicitud))
                 .isInstanceOf(InsufficientStockException.class);
     }
 
     @Test
     void registerMovementPersistsMovementWithTimestamp() {
-        when(productService.getProductEntity(1L)).thenReturn(product);
+        when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         ArgumentCaptor<Movement> captor = ArgumentCaptor.forClass(Movement.class);
         when(movementRepository.save(captor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        movementService.registerMovement(new MovementRequest(1L, MovementType.IN, 5, "Ajuste"));
+        movementService.registrarMovimiento(new MovementRequest(1L, MovementType.IN, 5, "Ajuste"));
 
-        Movement saved = captor.getValue();
-        assertThat(saved.getProductId()).isEqualTo(1L);
-        assertThat(saved.getTimestamp()).isBeforeOrEqualTo(Instant.now());
+        Movement guardado = captor.getValue();
+        assertThat(guardado.getProductId()).isEqualTo(1L);
+        assertThat(guardado.getTimestamp()).isBeforeOrEqualTo(Instant.now());
     }
 
     @Test
     void getHistoryThrowsWhenProductNotFound() {
-        when(productService.getProductEntity(99L)).thenThrow(new ProductNotFoundException(99L));
+        when(productService.obtenerProductoEntidad(99L)).thenThrow(new ProductNotFoundException(99L));
 
-        assertThatThrownBy(() -> movementService.getHistory(99L))
+        assertThatThrownBy(() -> movementService.obtenerHistorial(99L))
                 .isInstanceOf(ProductNotFoundException.class);
     }
 
     @Test
     void getHistoryReturnsMovementsOrderedByTimestampDesc() {
-        when(productService.getProductEntity(1L)).thenReturn(product);
-        Movement movement = Movement.builder()
+        when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
+        Movement movimiento = Movement.builder()
                 .id(1L).productId(1L).type(MovementType.OUT).quantity(2).reason("x").timestamp(Instant.now())
                 .build();
-        when(movementRepository.findByProductIdOrderByTimestampDesc(1L)).thenReturn(List.of(movement));
+        when(movementRepository.obtenerHistorialPorProducto(1L)).thenReturn(List.of(movimiento));
 
-        List<MovementResponse> history = movementService.getHistory(1L);
+        List<MovementResponse> historial = movementService.obtenerHistorial(1L);
 
-        assertThat(history).hasSize(1);
-        verify(movementRepository).findByProductIdOrderByTimestampDesc(1L);
+        assertThat(historial).hasSize(1);
+        verify(movementRepository).obtenerHistorialPorProducto(1L);
     }
 }

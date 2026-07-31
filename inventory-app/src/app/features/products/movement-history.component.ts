@@ -13,23 +13,23 @@ import { MovementService } from '../../core/services/movement.service';
   templateUrl: './movement-history.component.html'
 })
 export class MovementHistoryComponent implements OnInit {
-  readonly productId = input.required<number>();
+  readonly idProducto = input.required<number>();
 
   private readonly movementService = inject(MovementService);
 
-  protected movements: Movement[] = [];
-  protected loading = true;
-  protected loadError = false;
+  protected movimientos: Movement[] = [];
+  protected cargando = true;
+  protected errorCarga = false;
 
   ngOnInit(): void {
-    this.movementService.history(this.productId()).subscribe({
-      next: (movements) => {
-        this.movements = movements;
-        this.loading = false;
+    this.movementService.historial(this.idProducto()).subscribe({
+      next: (movimientos) => {
+        this.movimientos = movimientos;
+        this.cargando = false;
       },
       error: () => {
-        this.loadError = true;
-        this.loading = false;
+        this.errorCarga = true;
+        this.cargando = false;
       }
     });
   }

@@ -17,46 +17,46 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleProductNotFound(ProductNotFoundException ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> manejarProductoNoEncontrado(ProductNotFoundException ex, HttpServletRequest request) {
+        return construirRespuesta(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
     @ExceptionHandler(InsufficientStockException.class)
-    public ResponseEntity<ErrorResponse> handleInsufficientStock(InsufficientStockException ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> manejarStockInsuficiente(InsufficientStockException ex, HttpServletRequest request) {
+        return construirRespuesta(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
+    public ResponseEntity<ErrorResponse> manejarValidacion(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String mensaje = ex.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
-        return buildResponse(HttpStatus.BAD_REQUEST, message, request);
+        return construirRespuesta(HttpStatus.BAD_REQUEST, mensaje, request);
     }
 
     @ExceptionHandler(RequestNotPermitted.class)
-    public ResponseEntity<ErrorResponse> handleRateLimitExceeded(RequestNotPermitted ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.TOO_MANY_REQUESTS, "Limite de peticiones excedido, intente nuevamente en unos segundos", request);
+    public ResponseEntity<ErrorResponse> manejarLimiteExcedido(RequestNotPermitted ex, HttpServletRequest request) {
+        return construirRespuesta(HttpStatus.TOO_MANY_REQUESTS, "Limite de peticiones excedido, intente nuevamente en unos segundos", request);
     }
 
     @ExceptionHandler(CallNotPermittedException.class)
-    public ResponseEntity<ErrorResponse> handleCircuitBreakerOpen(CallNotPermittedException ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, "Servicio temporalmente no disponible, intente nuevamente mas tarde", request);
+    public ResponseEntity<ErrorResponse> manejarCircuitoAbierto(CallNotPermittedException ex, HttpServletRequest request) {
+        return construirRespuesta(HttpStatus.SERVICE_UNAVAILABLE, "Servicio temporalmente no disponible, intente nuevamente mas tarde", request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor: " + ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> manejarGenerico(Exception ex, HttpServletRequest request) {
+        return construirRespuesta(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor: " + ex.getMessage(), request);
     }
 
-    private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String message, HttpServletRequest request) {
-        ErrorResponse body = ErrorResponse.builder()
+    private ResponseEntity<ErrorResponse> construirRespuesta(HttpStatus status, String mensaje, HttpServletRequest request) {
+        ErrorResponse cuerpo = ErrorResponse.builder()
                 .timestamp(Instant.now())
                 .status(status.value())
                 .error(status.getReasonPhrase())
-                .message(message)
+                .message(mensaje)
                 .path(request.getRequestURI())
                 .build();
-        return ResponseEntity.status(status).body(body);
+        return ResponseEntity.status(status).body(cuerpo);
     }
 }

@@ -27,55 +27,55 @@ class AlertServiceTest {
 
     @Test
     void productAtExactlyHalfOfMinStockIsCritical() {
-        Product product = productWithStock(5, 10); // 5 <= 10 * 0.5
-        when(productRepository.findProductsBelowMinimumStock()).thenReturn(List.of(product));
+        Product producto = productoConStock(5, 10); // 5 <= 10 * 0.5
+        when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
 
-        List<StockAlert> alerts = alertService.getActiveAlerts();
+        List<StockAlert> alertas = alertService.obtenerAlertasActivas();
 
-        assertThat(alerts).hasSize(1);
-        assertThat(alerts.get(0).getSeverity()).isEqualTo(AlertSeverity.CRITICAL);
+        assertThat(alertas).hasSize(1);
+        assertThat(alertas.get(0).getSeverity()).isEqualTo(AlertSeverity.CRITICAL);
     }
 
     @Test
     void productBelowMinButAboveHalfIsLow() {
-        Product product = productWithStock(8, 10); // 8 <= 10 pero > 5 (mitad)
-        when(productRepository.findProductsBelowMinimumStock()).thenReturn(List.of(product));
+        Product producto = productoConStock(8, 10); // 8 <= 10 pero > 5 (mitad)
+        when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
 
-        List<StockAlert> alerts = alertService.getActiveAlerts();
+        List<StockAlert> alertas = alertService.obtenerAlertasActivas();
 
-        assertThat(alerts.get(0).getSeverity()).isEqualTo(AlertSeverity.LOW);
+        assertThat(alertas.get(0).getSeverity()).isEqualTo(AlertSeverity.LOW);
     }
 
     @Test
     void productWithZeroStockIsCritical() {
-        Product product = productWithStock(0, 6);
-        when(productRepository.findProductsBelowMinimumStock()).thenReturn(List.of(product));
+        Product producto = productoConStock(0, 6);
+        when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
 
-        List<StockAlert> alerts = alertService.getActiveAlerts();
+        List<StockAlert> alertas = alertService.obtenerAlertasActivas();
 
-        assertThat(alerts.get(0).getSeverity()).isEqualTo(AlertSeverity.CRITICAL);
+        assertThat(alertas.get(0).getSeverity()).isEqualTo(AlertSeverity.CRITICAL);
     }
 
     @Test
     void fallbackReturnsEmptyListWhenCircuitIsOpen() {
-        List<StockAlert> fallbackResult = invokeFallback(new RuntimeException("circuito abierto"));
+        List<StockAlert> resultadoFallback = invocarFallback(new RuntimeException("circuito abierto"));
 
-        assertThat(fallbackResult).isEmpty();
+        assertThat(resultadoFallback).isEmpty();
     }
 
-    private List<StockAlert> invokeFallback(Throwable throwable) {
+    private List<StockAlert> invocarFallback(Throwable causa) {
         try {
-            var method = AlertService.class.getDeclaredMethod("getActiveAlertsFallback", Throwable.class);
+            var method = AlertService.class.getDeclaredMethod("obtenerAlertasActivasFallback", Throwable.class);
             method.setAccessible(true);
             @SuppressWarnings("unchecked")
-            List<StockAlert> result = (List<StockAlert>) method.invoke(alertService, throwable);
-            return result;
+            List<StockAlert> resultado = (List<StockAlert>) method.invoke(alertService, causa);
+            return resultado;
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Product productWithStock(int currentStock, int minStock) {
+    private Product productoConStock(int currentStock, int minStock) {
         return Product.builder()
                 .id(1L)
                 .sku("SKU-1")

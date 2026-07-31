@@ -32,32 +32,32 @@ public class MovementService {
      */
     @Retry(name = "movementRegistration")
     @Transactional
-    public MovementResponse registerMovement(MovementRequest request) {
-        Product product = productService.getProductEntity(request.getProductId());
+    public MovementResponse registrarMovimiento(MovementRequest solicitud) {
+        Product producto = productService.obtenerProductoEntidad(solicitud.getProductId());
 
-        if (request.getType() == MovementType.OUT && product.getCurrentStock() < request.getQuantity()) {
-            throw new InsufficientStockException(product.getId(), product.getCurrentStock(), request.getQuantity());
+        if (solicitud.getType() == MovementType.OUT && producto.getCurrentStock() < solicitud.getQuantity()) {
+            throw new InsufficientStockException(producto.getId(), producto.getCurrentStock(), solicitud.getQuantity());
         }
 
-        int delta = request.getType() == MovementType.IN ? request.getQuantity() : -request.getQuantity();
-        product.setCurrentStock(product.getCurrentStock() + delta);
+        int variacion = solicitud.getType() == MovementType.IN ? solicitud.getQuantity() : -solicitud.getQuantity();
+        producto.setCurrentStock(producto.getCurrentStock() + variacion);
 
-        Movement movement = Movement.builder()
-                .productId(product.getId())
-                .type(request.getType())
-                .quantity(request.getQuantity())
-                .reason(request.getReason())
+        Movement movimiento = Movement.builder()
+                .productId(producto.getId())
+                .type(solicitud.getType())
+                .quantity(solicitud.getQuantity())
+                .reason(solicitud.getReason())
                 .timestamp(Instant.now())
                 .build();
 
-        Movement saved = movementRepository.save(movement);
-        return MovementResponse.fromEntity(saved);
+        Movement guardado = movementRepository.save(movimiento);
+        return MovementResponse.desdeEntidad(guardado);
     }
 
-    public List<MovementResponse> getHistory(Long productId) {
-        productService.getProductEntity(productId);
-        return movementRepository.findByProductIdOrderByTimestampDesc(productId).stream()
-                .map(MovementResponse::fromEntity)
+    public List<MovementResponse> obtenerHistorial(Long idProducto) {
+        productService.obtenerProductoEntidad(idProducto);
+        return movementRepository.obtenerHistorialPorProducto(idProducto).stream()
+                .map(MovementResponse::desdeEntidad)
                 .toList();
     }
 }

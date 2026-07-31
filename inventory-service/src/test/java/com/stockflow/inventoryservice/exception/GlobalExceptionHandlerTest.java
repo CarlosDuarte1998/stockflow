@@ -38,7 +38,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handlesProductNotFoundAs404() {
-        ResponseEntity<ErrorResponse> response = handler.handleProductNotFound(new ProductNotFoundException(99L), request);
+        ResponseEntity<ErrorResponse> response = handler.manejarProductoNoEncontrado(new ProductNotFoundException(99L), request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody().getStatus()).isEqualTo(404);
@@ -47,7 +47,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handlesInsufficientStockAs422() {
-        ResponseEntity<ErrorResponse> response = handler.handleInsufficientStock(
+        ResponseEntity<ErrorResponse> response = handler.manejarStockInsuficiente(
                 new InsufficientStockException(1L, 3, 10), request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -62,7 +62,7 @@ class GlobalExceptionHandlerTest {
         MethodArgumentNotValidException ex = new MethodArgumentNotValidException(
                 mock(org.springframework.core.MethodParameter.class), bindingResult);
 
-        ResponseEntity<ErrorResponse> response = handler.handleValidation(ex, request);
+        ResponseEntity<ErrorResponse> response = handler.manejarValidacion(ex, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody().getMessage()).contains("quantity debe ser mayor a 0");
@@ -73,7 +73,7 @@ class GlobalExceptionHandlerTest {
         RateLimiter rateLimiter = RateLimiter.ofDefaults("movementHistory");
         RequestNotPermitted ex = RequestNotPermitted.createRequestNotPermitted(rateLimiter);
 
-        ResponseEntity<ErrorResponse> response = handler.handleRateLimitExceeded(ex, request);
+        ResponseEntity<ErrorResponse> response = handler.manejarLimiteExcedido(ex, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
@@ -83,14 +83,14 @@ class GlobalExceptionHandlerTest {
         CallNotPermittedException ex = CallNotPermittedException.createCallNotPermittedException(
                 io.github.resilience4j.circuitbreaker.CircuitBreaker.ofDefaults("alertsService"));
 
-        ResponseEntity<ErrorResponse> response = handler.handleCircuitBreakerOpen(ex, request);
+        ResponseEntity<ErrorResponse> response = handler.manejarCircuitoAbierto(ex, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @Test
     void handlesGenericExceptionAs500() {
-        ResponseEntity<ErrorResponse> response = handler.handleGeneric(new RuntimeException("boom"), request);
+        ResponseEntity<ErrorResponse> response = handler.manejarGenerico(new RuntimeException("boom"), request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(response.getBody().getMessage()).contains("boom");

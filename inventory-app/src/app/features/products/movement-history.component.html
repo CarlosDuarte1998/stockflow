@@ -1,32 +1,32 @@
-@if (loading) {
+@if (cargando) {
   <div class="p-3"><p-skeleton height="2.5rem" /></div>
-} @else if (loadError) {
+} @else if (errorCarga) {
   <p class="text-red-600 text-sm p-3 flex items-center gap-2">
     <i class="pi pi-exclamation-triangle"></i> No se pudo cargar el historial de movimientos.
   </p>
-} @else if (movements.length === 0) {
+} @else if (movimientos.length === 0) {
   <p class="text-surface-400 text-sm italic p-3">Este producto no tiene movimientos registrados.</p>
 } @else {
   <ul class="flex flex-col divide-y divide-surface-200">
-    @for (movement of movements; track movement.id) {
+    @for (movimiento of movimientos; track movimiento.id) {
       <li class="flex items-center gap-3 py-2.5 px-1 text-sm">
         <span
           class="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-          [class.bg-green-100]="movement.type === 'IN'"
-          [class.bg-red-100]="movement.type === 'OUT'"
+          [class.bg-green-100]="movimiento.type === 'IN'"
+          [class.bg-red-100]="movimiento.type === 'OUT'"
         >
           <i
             class="pi text-xs"
-            [class.pi-arrow-down]="movement.type === 'IN'"
-            [class.text-green-600]="movement.type === 'IN'"
-            [class.pi-arrow-up]="movement.type === 'OUT'"
-            [class.text-red-600]="movement.type === 'OUT'"
+            [class.pi-arrow-down]="movimiento.type === 'IN'"
+            [class.text-green-600]="movimiento.type === 'IN'"
+            [class.pi-arrow-up]="movimiento.type === 'OUT'"
+            [class.text-red-600]="movimiento.type === 'OUT'"
           ></i>
         </span>
-        <p-tag [severity]="movement.type === 'IN' ? 'success' : 'danger'" [value]="movement.type" />
-        <span class="font-medium text-surface-800">{{ movement.quantity }} unidades</span>
-        <span class="text-surface-500 flex-1 truncate">{{ movement.reason || 'Sin motivo' }}</span>
-        <span class="text-surface-400 text-xs shrink-0">{{ movement.timestamp | date: 'short' }}</span>
+        <p-tag [severity]="movimiento.type === 'IN' ? 'success' : 'danger'" [value]="movimiento.type" />
+        <span class="font-medium text-surface-800">{{ movimiento.quantity }} unidades</span>
+        <span class="text-surface-500 flex-1 truncate">{{ movimiento.reason || 'Sin motivo' }}</span>
+        <span class="text-surface-400 text-xs shrink-0">{{ movimiento.timestamp | date: 'short' }}</span>
       </li>
     }
   </ul>

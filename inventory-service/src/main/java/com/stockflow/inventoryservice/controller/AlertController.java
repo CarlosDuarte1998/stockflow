@@ -26,7 +26,7 @@ public class AlertController {
     @GetMapping
     @Operation(summary = "Listar productos con stock actual por debajo o igual al minimo definido")
     @ApiResponse(responseCode = "200", description = "Alertas activas")
-    public ResponseEntity<List<StockAlert>> getAlerts() {
-        return ResponseEntity.ok(alertService.getActiveAlerts());
+    public ResponseEntity<List<StockAlert>> obtenerAlertas() {
+        return ResponseEntity.ok(alertService.obtenerAlertasActivas());
     }
 }

@@ -5,15 +5,15 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InventoryStore } from '../../core/store/inventory.store';
 import { AdvancedStatsComponent } from './advanced-stats.component';
 
-interface Kpi {
-  label: string;
-  value: string;
-  icon: string;
+interface Indicador {
+  etiqueta: string;
+  valor: string;
+  icono: string;
   color: string;
-  hint?: string;
+  pista?: string;
 }
 
-const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const FORMATEADOR_MONEDA = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 @Component({
   selector: 'app-dashboard',
@@ -24,37 +24,37 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', { style: 'currency', c
 export class DashboardComponent implements OnInit {
   protected readonly store = inject(InventoryStore);
 
-  protected readonly kpis = computed<Kpi[]>(() => [
+  protected readonly indicadores = computed<Indicador[]>(() => [
     {
-      label: 'Total de productos',
-      value: `${this.store.totalProducts()}`,
-      icon: 'pi-box',
+      etiqueta: 'Total de productos',
+      valor: `${this.store.totalProducts()}`,
+      icono: 'pi-box',
       color: '#3b82f6'
     },
     {
-      label: 'Alertas activas',
-      value: `${this.store.totalAlerts()}`,
-      icon: 'pi-bell',
+      etiqueta: 'Alertas activas',
+      valor: `${this.store.totalAlerts()}`,
+      icono: 'pi-bell',
       color: '#f59e0b',
-      hint: this.store.totalAlerts() > 0 ? 'Requieren revision' : 'Todo en orden'
+      pista: this.store.totalAlerts() > 0 ? 'Requieren revision' : 'Todo en orden'
     },
     {
-      label: 'Alertas criticas',
-      value: `${this.store.totalCriticalAlerts()}`,
-      icon: 'pi-exclamation-triangle',
+      etiqueta: 'Alertas criticas',
+      valor: `${this.store.totalCriticalAlerts()}`,
+      icono: 'pi-exclamation-triangle',
       color: '#ef4444',
-      hint: this.store.totalCriticalAlerts() > 0 ? 'Accion inmediata' : 'Sin criticos'
+      pista: this.store.totalCriticalAlerts() > 0 ? 'Accion inmediata' : 'Sin criticos'
     },
     {
-      label: 'Valor total de inventario',
-      value: CURRENCY_FORMATTER.format(this.store.totalInventoryValue()),
-      icon: 'pi-dollar',
+      etiqueta: 'Valor total de inventario',
+      valor: FORMATEADOR_MONEDA.format(this.store.totalInventoryValue()),
+      icono: 'pi-dollar',
       color: '#22c55e'
     }
   ]);
 
   ngOnInit(): void {
-    this.store.loadProducts();
-    this.store.loadAlerts();
+    this.store.cargarProductos();
+    this.store.cargarAlertas();
   }
 }

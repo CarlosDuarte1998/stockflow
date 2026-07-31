@@ -13,6 +13,6 @@ export class AlertsComponent implements OnInit {
   protected readonly store = inject(InventoryStore);
 
   ngOnInit(): void {
-    this.store.loadAlerts();
+    this.store.cargarAlertas();
   }
 }

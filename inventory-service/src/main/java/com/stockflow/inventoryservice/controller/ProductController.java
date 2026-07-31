@@ -29,17 +29,17 @@ public class ProductController {
     @GetMapping
     @Operation(summary = "Listar productos con paginacion y filtro opcional por categoria")
     @ApiResponse(responseCode = "200", description = "Pagina de productos")
-    public ResponseEntity<PagedResponse<ProductResponse>> listProducts(
-            @Parameter(description = "Filtro opcional por categoria") @RequestParam(required = false) String category,
+    public ResponseEntity<PagedResponse<ProductResponse>> listarProductos(
+            @Parameter(description = "Filtro opcional por categoria") @RequestParam(value = "category", required = false) String categoria,
             Pageable pageable) {
-        return ResponseEntity.ok(PagedResponse.from(productService.listProducts(category, pageable)));
+        return ResponseEntity.ok(PagedResponse.desde(productService.listarProductos(categoria, pageable)));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener el detalle de un producto por id")
     @ApiResponse(responseCode = "200", description = "Producto encontrado")
     @ApiResponse(responseCode = "404", description = "Producto no encontrado")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProduct(id));
+    public ResponseEntity<ProductResponse> obtenerProducto(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.obtenerProducto(id));
     }
 }

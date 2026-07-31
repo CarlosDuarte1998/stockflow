@@ -10,7 +10,7 @@
       optionValue="value"
       placeholder="Filtrar por categoria"
       [ngModel]="store.filters().category"
-      (ngModelChange)="onCategoryChange($event)"
+      (ngModelChange)="alCambiarCategoria($event)"
       styleClass="w-56"
     />
   </div>
@@ -24,7 +24,7 @@
       [lazy]="true"
       [loading]="store.loading()"
       [first]="store.page() * 10"
-      (onLazyLoad)="onPageChange($event)"
+      (onLazyLoad)="alCambiarPagina($event)"
       dataKey="id"
       styleClass="p-datatable-sm"
     >
@@ -59,7 +59,7 @@
           <td class="text-surface-500">{{ product.minStock }}</td>
           <td>{{ product.unitPrice | currency }}</td>
           <td>
-            <p-tag [severity]="severityOf(product)" [value]="statusOf(product)" [icon]="iconOf(product)" />
+            <p-tag [severity]="severidadDe(product)" [value]="estadoDe(product)" [icon]="iconoDe(product)" />
           </td>
           <td class="text-right">
             <button
@@ -70,14 +70,14 @@
               size="small"
               [icon]="expandedProductId === product.id ? 'pi pi-chevron-up' : 'pi pi-history'"
               [label]="expandedProductId === product.id ? 'Ocultar' : 'Ver historial'"
-              (click)="toggleHistory(product)"
+              (click)="alternarHistorial(product)"
             ></button>
           </td>
         </tr>
         <tr [class.hidden]="expandedProductId !== product.id">
           <td colspan="9" class="bg-surface-50">
             @defer (on interaction(historyTrigger)) {
-              <app-movement-history [productId]="product.id" />
+              <app-movement-history [idProducto]="product.id" />
             } @placeholder {
               <p class="text-sm text-surface-400 italic p-3">
                 Haz clic en "Ver historial" para cargar los movimientos de este producto.

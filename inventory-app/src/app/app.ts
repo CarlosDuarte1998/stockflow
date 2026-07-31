@@ -3,50 +3,50 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { ToastModule } from 'primeng/toast';
 import { filter } from 'rxjs';
 
-interface NavItem {
+interface ItemNavegacion {
   path: string;
-  label: string;
-  icon: string;
-  title: string;
-  subtitle: string;
+  etiqueta: string;
+  icono: string;
+  titulo: string;
+  subtitulo: string;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const ITEMS_NAVEGACION: ItemNavegacion[] = [
   {
     path: '/dashboard',
-    label: 'Dashboard',
-    icon: 'pi-chart-line',
-    title: 'Dashboard de inventario',
-    subtitle: 'Resumen general del estado del inventario'
+    etiqueta: 'Dashboard',
+    icono: 'pi-chart-line',
+    titulo: 'Dashboard de inventario',
+    subtitulo: 'Resumen general del estado del inventario'
   },
   {
     path: '/products',
-    label: 'Productos',
-    icon: 'pi-box',
-    title: 'Productos',
-    subtitle: 'Consulta y filtra el catalogo de productos'
+    etiqueta: 'Productos',
+    icono: 'pi-box',
+    titulo: 'Productos',
+    subtitulo: 'Consulta y filtra el catalogo de productos'
   },
   {
     path: '/alerts',
-    label: 'Alertas',
-    icon: 'pi-bell',
-    title: 'Alertas de inventario',
-    subtitle: 'Productos con stock bajo o critico'
+    etiqueta: 'Alertas',
+    icono: 'pi-bell',
+    titulo: 'Alertas de inventario',
+    subtitulo: 'Productos con stock bajo o critico'
   },
   {
     path: '/movements',
-    label: 'Registrar movimiento',
-    icon: 'pi-arrow-right-arrow-left',
-    title: 'Registrar movimiento',
-    subtitle: 'Registra entradas y salidas de stock'
+    etiqueta: 'Registrar movimiento',
+    icono: 'pi-arrow-right-arrow-left',
+    titulo: 'Registrar movimiento',
+    subtitulo: 'Registra entradas y salidas de stock'
   }
 ];
 
-function capitalizeFirst(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
+function capitalizarPrimeraLetra(texto: string): string {
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
-const TODAY_FORMATTER = new Intl.DateTimeFormat('es-ES', {
+const FORMATEADOR_FECHA = new Intl.DateTimeFormat('es-ES', {
   weekday: 'long',
   day: 'numeric',
   month: 'long',
@@ -61,21 +61,21 @@ const TODAY_FORMATTER = new Intl.DateTimeFormat('es-ES', {
 export class App {
   private readonly router = inject(Router);
 
-  protected readonly navItems = NAV_ITEMS;
-  protected readonly today = capitalizeFirst(TODAY_FORMATTER.format(new Date()));
+  protected readonly itemsNavegacion = ITEMS_NAVEGACION;
+  protected readonly hoy = capitalizarPrimeraLetra(FORMATEADOR_FECHA.format(new Date()));
 
-  private readonly currentUrl = signal(this.router.url);
+  private readonly urlActual = signal(this.router.url);
 
-  protected readonly pageTitle = computed(
-    () => this.navItems.find((item) => this.currentUrl().startsWith(item.path))?.title ?? 'StockFlow'
+  protected readonly tituloPagina = computed(
+    () => this.itemsNavegacion.find((item) => this.urlActual().startsWith(item.path))?.titulo ?? 'StockFlow'
   );
-  protected readonly pageSubtitle = computed(
-    () => this.navItems.find((item) => this.currentUrl().startsWith(item.path))?.subtitle ?? ''
+  protected readonly subtituloPagina = computed(
+    () => this.itemsNavegacion.find((item) => this.urlActual().startsWith(item.path))?.subtitulo ?? ''
   );
 
   constructor() {
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      this.currentUrl.set(this.router.url);
+      this.urlActual.set(this.router.url);
     });
   }
 }

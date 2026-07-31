@@ -10,7 +10,7 @@ import { InventoryStore } from '../../core/store/inventory.store';
 import { MovementService } from '../../core/services/movement.service';
 import { ProductService } from '../../core/services/product.service';
 
-interface ProductOption {
+interface OpcionProducto {
   label: string;
   value: number;
 }
@@ -29,7 +29,7 @@ export class MovementFormComponent implements OnInit {
   private readonly store = inject(InventoryStore);
 
   protected readonly submitting = signal(false);
-  protected readonly productOptions = signal<ProductOption[]>([]);
+  protected readonly productOptions = signal<OpcionProducto[]>([]);
   protected readonly loadingProducts = signal(true);
 
   protected readonly types = [
@@ -45,11 +45,11 @@ export class MovementFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.productService.list(0, 100).subscribe({
-      next: (page) => {
+    this.productService.listar(0, 100).subscribe({
+      next: (pagina) => {
         this.productOptions.set(
-          page.content
-            .map((product) => ({ label: `${product.sku} — ${product.name}`, value: product.id }))
+          pagina.content
+            .map((producto) => ({ label: `${producto.sku} — ${producto.name}`, value: producto.id }))
             .sort((a, b) => a.label.localeCompare(b.label))
         );
         this.loadingProducts.set(false);
@@ -58,21 +58,21 @@ export class MovementFormComponent implements OnInit {
     });
   }
 
-  submit(): void {
+  enviar(): void {
     if (this.form.invalid || this.submitting()) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.submitting.set(true);
-    const value = this.form.getRawValue();
+    const valor = this.form.getRawValue();
 
     this.movementService
-      .register({
-        productId: value.productId!,
-        type: value.type,
-        quantity: value.quantity!,
-        reason: value.reason || undefined
+      .registrar({
+        productId: valor.productId!,
+        type: valor.type,
+        quantity: valor.quantity!,
+        reason: valor.reason || undefined
       })
       .subscribe({
         next: () => {
@@ -83,7 +83,7 @@ export class MovementFormComponent implements OnInit {
             detail: 'El stock del producto fue actualizado correctamente.'
           });
           this.form.reset({ productId: null, type: 'OUT', quantity: null, reason: '' });
-          this.store.refreshAfterMovement();
+          this.store.refrescarTrasMovimiento();
         },
         error: () => {
           this.submitting.set(false);

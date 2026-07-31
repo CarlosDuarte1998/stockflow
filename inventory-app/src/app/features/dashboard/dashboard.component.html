@@ -1,19 +1,19 @@
 <div class="p-8 flex flex-col gap-6">
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-    @for (kpi of kpis(); track kpi.label) {
+    @for (indicador of indicadores(); track indicador.etiqueta) {
       <div class="bg-surface-0 rounded-xl border border-surface-200 shadow-sm p-5 flex items-start justify-between hover:shadow-md transition-shadow">
         <div class="flex flex-col gap-1">
-          <span class="text-sm text-surface-500 font-medium">{{ kpi.label }}</span>
-          <span class="text-3xl font-bold text-surface-900">{{ kpi.value }}</span>
-          @if (kpi.hint) {
-            <span class="text-xs" [style.color]="kpi.color">{{ kpi.hint }}</span>
+          <span class="text-sm text-surface-500 font-medium">{{ indicador.etiqueta }}</span>
+          <span class="text-3xl font-bold text-surface-900">{{ indicador.valor }}</span>
+          @if (indicador.pista) {
+            <span class="text-xs" [style.color]="indicador.color">{{ indicador.pista }}</span>
           }
         </div>
         <span
           class="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-          [style.background]="kpi.color + '1a'"
+          [style.background]="indicador.color + '1a'"
         >
-          <i class="pi {{ kpi.icon }} text-lg" [style.color]="kpi.color"></i>
+          <i class="pi {{ indicador.icono }} text-lg" [style.color]="indicador.color"></i>
         </span>
       </div>
     }

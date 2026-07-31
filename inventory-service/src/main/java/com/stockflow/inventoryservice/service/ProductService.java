@@ -17,20 +17,20 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Page<ProductResponse> listProducts(String category, Pageable pageable) {
-        Page<Product> products = (category == null || category.isBlank())
+    public Page<ProductResponse> listarProductos(String categoria, Pageable pageable) {
+        Page<Product> productos = (categoria == null || categoria.isBlank())
                 ? productRepository.findAll(pageable)
-                : productRepository.findByCategoryIgnoreCase(category, pageable);
-        return products.map(ProductResponse::fromEntity);
+                : productRepository.buscarPorCategoria(categoria, pageable);
+        return productos.map(ProductResponse::desdeEntidad);
     }
 
-    public ProductResponse getProduct(Long id) {
+    public ProductResponse obtenerProducto(Long id) {
         return productRepository.findById(id)
-                .map(ProductResponse::fromEntity)
+                .map(ProductResponse::desdeEntidad)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
-    Product getProductEntity(Long id) {
+    Product obtenerProductoEntidad(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }

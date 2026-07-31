@@ -35,11 +35,11 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    private Product product;
+    private Product producto;
 
     @BeforeEach
     void setUp() {
-        product = Product.builder()
+        producto = Product.builder()
                 .id(1L)
                 .sku("ELEC-001")
                 .name("Mouse inalambrico")
@@ -53,40 +53,40 @@ class ProductServiceTest {
     @Test
     void listProductsWithoutCategoryUsesFindAll() {
         Pageable pageable = PageRequest.of(0, 10);
-        when(productRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(product)));
+        when(productRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(producto)));
 
-        Page<ProductResponse> result = productService.listProducts(null, pageable);
+        Page<ProductResponse> resultado = productService.listarProductos(null, pageable);
 
-        assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).getSku()).isEqualTo("ELEC-001");
+        assertThat(resultado.getContent()).hasSize(1);
+        assertThat(resultado.getContent().get(0).getSku()).isEqualTo("ELEC-001");
     }
 
     @Test
     void listProductsWithCategoryFiltersByCategory() {
         Pageable pageable = PageRequest.of(0, 10);
-        when(productRepository.findByCategoryIgnoreCase(anyString(), any())).thenReturn(new PageImpl<>(List.of(product)));
+        when(productRepository.buscarPorCategoria(anyString(), any())).thenReturn(new PageImpl<>(List.of(producto)));
 
-        Page<ProductResponse> result = productService.listProducts("ELECTRONICA", pageable);
+        Page<ProductResponse> resultado = productService.listarProductos("ELECTRONICA", pageable);
 
-        assertThat(result.getContent()).hasSize(1);
-        verify(productRepository).findByCategoryIgnoreCase("ELECTRONICA", pageable);
+        assertThat(resultado.getContent()).hasSize(1);
+        verify(productRepository).buscarPorCategoria("ELECTRONICA", pageable);
     }
 
     @Test
     void getProductReturnsResponseWhenFound() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(producto));
 
-        ProductResponse response = productService.getProduct(1L);
+        ProductResponse respuesta = productService.obtenerProducto(1L);
 
-        assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getCurrentStock()).isEqualTo(45);
+        assertThat(respuesta.getId()).isEqualTo(1L);
+        assertThat(respuesta.getCurrentStock()).isEqualTo(45);
     }
 
     @Test
     void getProductThrowsWhenNotFound() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> productService.getProduct(99L))
+        assertThatThrownBy(() -> productService.obtenerProducto(99L))
                 .isInstanceOf(ProductNotFoundException.class);
     }
 
@@ -94,7 +94,7 @@ class ProductServiceTest {
     void getProductEntityThrowsWhenNotFound() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> productService.getProductEntity(99L))
+        assertThatThrownBy(() -> productService.obtenerProductoEntidad(99L))
                 .isInstanceOf(ProductNotFoundException.class);
     }
 }

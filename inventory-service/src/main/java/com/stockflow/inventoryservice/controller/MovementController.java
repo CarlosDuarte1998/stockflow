@@ -35,9 +35,9 @@ public class MovementController {
     @ApiResponse(responseCode = "201", description = "Movimiento registrado")
     @ApiResponse(responseCode = "422", description = "Stock insuficiente para un movimiento de salida")
     @ApiResponse(responseCode = "400", description = "Datos de entrada invalidos")
-    public ResponseEntity<MovementResponse> registerMovement(@Valid @RequestBody MovementRequest request) {
-        MovementResponse response = movementService.registerMovement(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    public ResponseEntity<MovementResponse> registrarMovimiento(@Valid @RequestBody MovementRequest solicitud) {
+        MovementResponse respuesta = movementService.registrarMovimiento(solicitud);
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
     @GetMapping("/{productId}/history")
@@ -45,7 +45,7 @@ public class MovementController {
     @Operation(summary = "Obtener el historial de movimientos de un producto")
     @ApiResponse(responseCode = "200", description = "Historial de movimientos")
     @ApiResponse(responseCode = "404", description = "Producto no encontrado")
-    public ResponseEntity<List<MovementResponse>> getHistory(@PathVariable Long productId) {
-        return ResponseEntity.ok(movementService.getHistory(productId));
+    public ResponseEntity<List<MovementResponse>> obtenerHistorial(@PathVariable(value = "productId") Long idProducto) {
+        return ResponseEntity.ok(movementService.obtenerHistorial(idProducto));
     }
 }

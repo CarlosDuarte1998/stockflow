@@ -5,16 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Page<Product> findByCategoryIgnoreCase(String category, Pageable pageable);
-
-    Optional<Product> findBySku(String sku);
+    @Query("SELECT p FROM Product p WHERE LOWER(p.category) = LOWER(:categoria)")
+    Page<Product> buscarPorCategoria(@Param("categoria") String categoria, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.currentStock <= p.minStock")
-    List<Product> findProductsBelowMinimumStock();
+    List<Product> obtenerProductosBajoStockMinimo();
 }
