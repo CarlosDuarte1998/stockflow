@@ -7,6 +7,10 @@ Monorepo compuesto por:
 - [`inventory-service/`](./inventory-service) — Microservicio backend (Spring Boot 3.5+).
 - [`inventory-app/`](./inventory-app) — SPA de dashboard (Angular 16+).
 
+📖 **[DOCUMENTACION_TECNICA.md](./DOCUMENTACION_TECNICA.md)** — explicación completa de la
+arquitectura, decisiones técnicas, endpoints, Resilience4j, Signals, `@defer`, bugs encontrados y
+corregidos, y el plan/estado de pruebas del frontend. Material de apoyo para la defensa técnica.
+
 ## Cómo levantar el proyecto
 
 ### Backend
