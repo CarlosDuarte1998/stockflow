@@ -33,13 +33,13 @@ class InventoryFlowIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void registeringOutMovementUpdatesStockAndTriggersAlert() throws Exception {
+    void registrarMovimientoOutActualizaStockYDisparaAlerta() throws Exception {
         // Producto ELEC-003 (id=3): currentStock=15, minStock=5 segun data.sql
         mockMvc.perform(get("/api/v1/products/3"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.currentStock").value(15));
 
-        Map<String, Object> body = Map.of(
+        Map<String, Object> cuerpo = Map.of(
                 "productId", 3,
                 "type", "OUT",
                 "quantity", 12,
@@ -47,7 +47,7 @@ class InventoryFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/movements")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(body)))
+                        .content(objectMapper.writeValueAsString(cuerpo)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.productId").value(3))
                 .andExpect(jsonPath("$.type").value("OUT"));
@@ -66,8 +66,8 @@ class InventoryFlowIntegrationTest {
     }
 
     @Test
-    void registeringOutMovementWithInsufficientStockReturns422() throws Exception {
-        Map<String, Object> body = Map.of(
+    void registrarMovimientoOutConStockInsuficienteRetorna422() throws Exception {
+        Map<String, Object> cuerpo = Map.of(
                 "productId", 3,
                 "type", "OUT",
                 "quantity", 9999,
@@ -75,30 +75,30 @@ class InventoryFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/movements")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(body)))
+                        .content(objectMapper.writeValueAsString(cuerpo)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.status").value(422));
     }
 
     @Test
-    void invalidMovementPayloadReturns400() throws Exception {
-        Map<String, Object> body = Map.of("productId", 3, "type", "OUT", "quantity", -5);
+    void payloadDeMovimientoInvalidoRetorna400() throws Exception {
+        Map<String, Object> cuerpo = Map.of("productId", 3, "type", "OUT", "quantity", -5);
 
         mockMvc.perform(post("/api/v1/movements")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(body)))
+                        .content(objectMapper.writeValueAsString(cuerpo)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void getUnknownProductReturns404() throws Exception {
+    void obtenerProductoDesconocidoRetorna404() throws Exception {
         mockMvc.perform(get("/api/v1/products/99999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
     }
 
     @Test
-    void listProductsSupportsPaginationAndCategoryFilter() throws Exception {
+    void listarProductosSoportaPaginacionYFiltroPorCategoria() throws Exception {
         mockMvc.perform(get("/api/v1/products").param("page", "0").param("size", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2));

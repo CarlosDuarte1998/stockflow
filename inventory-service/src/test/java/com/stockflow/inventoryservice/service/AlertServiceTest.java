@@ -26,7 +26,7 @@ class AlertServiceTest {
     private AlertService alertService;
 
     @Test
-    void productAtExactlyHalfOfMinStockIsCritical() {
+    void productoExactamenteEnMitadDeMinStockEsCritico() {
         Product producto = productoConStock(5, 10); // 5 <= 10 * 0.5
         when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
 
@@ -37,7 +37,7 @@ class AlertServiceTest {
     }
 
     @Test
-    void productBelowMinButAboveHalfIsLow() {
+    void productoBajoMinimoPeroSobreMitadEsBajo() {
         Product producto = productoConStock(8, 10); // 8 <= 10 pero > 5 (mitad)
         when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
 
@@ -47,7 +47,7 @@ class AlertServiceTest {
     }
 
     @Test
-    void productWithZeroStockIsCritical() {
+    void productoConStockCeroEsCritico() {
         Product producto = productoConStock(0, 6);
         when(productRepository.obtenerProductosBajoStockMinimo()).thenReturn(List.of(producto));
 
@@ -57,7 +57,7 @@ class AlertServiceTest {
     }
 
     @Test
-    void fallbackReturnsEmptyListWhenCircuitIsOpen() {
+    void fallbackRetornaListaVaciaCuandoCircuitoEstaAbierto() {
         List<StockAlert> resultadoFallback = invocarFallback(new RuntimeException("circuito abierto"));
 
         assertThat(resultadoFallback).isEmpty();

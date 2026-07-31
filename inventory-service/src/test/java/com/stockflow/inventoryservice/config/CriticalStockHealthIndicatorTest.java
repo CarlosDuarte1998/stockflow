@@ -26,43 +26,43 @@ class CriticalStockHealthIndicatorTest {
     private CriticalStockHealthIndicator healthIndicator;
 
     @Test
-    void reportsDownWhenMoreThan20PercentCritical() {
+    void reportaDownCuandoMasDe20PorcientoEsCritico() {
         // 2 de 5 productos criticos = 40% > 20%
         when(productRepository.findAll()).thenReturn(List.of(
-                critical(), critical(), healthy(), healthy(), healthy()));
+                critico(), critico(), saludable(), saludable(), saludable()));
 
-        Health health = healthIndicator.health();
+        Health salud = healthIndicator.health();
 
-        assertThat(health.getStatus()).isEqualTo(Status.DOWN);
-        assertThat(health.getDetails()).containsEntry("criticalProducts", 2L);
+        assertThat(salud.getStatus()).isEqualTo(Status.DOWN);
+        assertThat(salud.getDetails()).containsEntry("criticalProducts", 2L);
     }
 
     @Test
-    void reportsUpWhen20PercentOrLessCritical() {
+    void reportaUpCuando20PorcientoOMenosEsCritico() {
         // 1 de 5 = 20%, no supera el umbral (estrictamente mayor a 20%)
         when(productRepository.findAll()).thenReturn(List.of(
-                critical(), healthy(), healthy(), healthy(), healthy()));
+                critico(), saludable(), saludable(), saludable(), saludable()));
 
-        Health health = healthIndicator.health();
+        Health salud = healthIndicator.health();
 
-        assertThat(health.getStatus()).isEqualTo(Status.UP);
+        assertThat(salud.getStatus()).isEqualTo(Status.UP);
     }
 
     @Test
-    void reportsUnknownWhenNoProducts() {
+    void reportaUnknownCuandoNoHayProductos() {
         when(productRepository.findAll()).thenReturn(List.of());
 
-        Health health = healthIndicator.health();
+        Health salud = healthIndicator.health();
 
-        assertThat(health.getStatus()).isEqualTo(Status.UNKNOWN);
+        assertThat(salud.getStatus()).isEqualTo(Status.UNKNOWN);
     }
 
-    private Product critical() {
+    private Product critico() {
         return Product.builder().id(1L).sku("A").name("A").category("C")
                 .currentStock(0).minStock(10).unitPrice(BigDecimal.ONE).build();
     }
 
-    private Product healthy() {
+    private Product saludable() {
         return Product.builder().id(2L).sku("B").name("B").category("C")
                 .currentStock(50).minStock(10).unitPrice(BigDecimal.ONE).build();
     }

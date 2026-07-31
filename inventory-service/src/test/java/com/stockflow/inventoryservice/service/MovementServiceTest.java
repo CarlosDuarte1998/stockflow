@@ -53,7 +53,7 @@ class MovementServiceTest {
     }
 
     @Test
-    void registerMovementInIncreasesStock() {
+    void registrarMovimientoInIncrementaStock() {
         when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         when(movementRepository.save(any(Movement.class))).thenAnswer(invocation -> {
             Movement m = invocation.getArgument(0);
@@ -70,7 +70,7 @@ class MovementServiceTest {
     }
 
     @Test
-    void registerMovementOutDecreasesStockAndCanTriggerAlertCondition() {
+    void registrarMovimientoOutDisminuyeStockYPuedeDispararAlerta() {
         when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         when(movementRepository.save(any(Movement.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -83,7 +83,7 @@ class MovementServiceTest {
     }
 
     @Test
-    void registerMovementOutWithInsufficientStockThrows() {
+    void registrarMovimientoOutConStockInsuficienteLanzaExcepcion() {
         when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
 
         MovementRequest solicitud = new MovementRequest(1L, MovementType.OUT, 999, "Venta");
@@ -93,7 +93,7 @@ class MovementServiceTest {
     }
 
     @Test
-    void registerMovementPersistsMovementWithTimestamp() {
+    void registrarMovimientoPersisteMovimientoConTimestamp() {
         when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         ArgumentCaptor<Movement> captor = ArgumentCaptor.forClass(Movement.class);
         when(movementRepository.save(captor.capture())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -106,7 +106,7 @@ class MovementServiceTest {
     }
 
     @Test
-    void getHistoryThrowsWhenProductNotFound() {
+    void obtenerHistorialLanzaExcepcionCuandoProductoNoExiste() {
         when(productService.obtenerProductoEntidad(99L)).thenThrow(new ProductNotFoundException(99L));
 
         assertThatThrownBy(() -> movementService.obtenerHistorial(99L))
@@ -114,7 +114,7 @@ class MovementServiceTest {
     }
 
     @Test
-    void getHistoryReturnsMovementsOrderedByTimestampDesc() {
+    void obtenerHistorialRetornaMovimientosOrdenadosPorTimestampDesc() {
         when(productService.obtenerProductoEntidad(1L)).thenReturn(producto);
         Movement movimiento = Movement.builder()
                 .id(1L).productId(1L).type(MovementType.OUT).quantity(2).reason("x").timestamp(Instant.now())

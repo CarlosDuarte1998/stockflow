@@ -51,7 +51,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void listProductsWithoutCategoryUsesFindAll() {
+    void listarProductosSinCategoriaUsaFindAll() {
         Pageable pageable = PageRequest.of(0, 10);
         when(productRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(producto)));
 
@@ -62,7 +62,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void listProductsWithCategoryFiltersByCategory() {
+    void listarProductosConCategoriaFiltraPorCategoria() {
         Pageable pageable = PageRequest.of(0, 10);
         when(productRepository.buscarPorCategoria(anyString(), any())).thenReturn(new PageImpl<>(List.of(producto)));
 
@@ -73,7 +73,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductReturnsResponseWhenFound() {
+    void obtenerProductoRetornaRespuestaCuandoExiste() {
         when(productRepository.findById(1L)).thenReturn(Optional.of(producto));
 
         ProductResponse respuesta = productService.obtenerProducto(1L);
@@ -83,7 +83,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductThrowsWhenNotFound() {
+    void obtenerProductoLanzaExcepcionCuandoNoExiste() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.obtenerProducto(99L))
@@ -91,7 +91,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductEntityThrowsWhenNotFound() {
+    void obtenerProductoEntidadLanzaExcepcionCuandoNoExiste() {
         when(productRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.obtenerProductoEntidad(99L))

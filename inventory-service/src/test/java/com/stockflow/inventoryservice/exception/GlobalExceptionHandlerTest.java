@@ -26,73 +26,73 @@ import static org.mockito.Mockito.when;
 class GlobalExceptionHandlerTest {
 
     @Mock
-    private HttpServletRequest request;
+    private HttpServletRequest peticion;
 
-    private GlobalExceptionHandler handler;
+    private GlobalExceptionHandler manejador;
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalExceptionHandler();
-        when(request.getRequestURI()).thenReturn("/api/v1/products/99");
+        manejador = new GlobalExceptionHandler();
+        when(peticion.getRequestURI()).thenReturn("/api/v1/products/99");
     }
 
     @Test
-    void handlesProductNotFoundAs404() {
-        ResponseEntity<ErrorResponse> response = handler.manejarProductoNoEncontrado(new ProductNotFoundException(99L), request);
+    void manejaProductoNoEncontradoComo404() {
+        ResponseEntity<ErrorResponse> respuesta = manejador.manejarProductoNoEncontrado(new ProductNotFoundException(99L), peticion);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().getStatus()).isEqualTo(404);
-        assertThat(response.getBody().getPath()).isEqualTo("/api/v1/products/99");
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(respuesta.getBody().getStatus()).isEqualTo(404);
+        assertThat(respuesta.getBody().getPath()).isEqualTo("/api/v1/products/99");
     }
 
     @Test
-    void handlesInsufficientStockAs422() {
-        ResponseEntity<ErrorResponse> response = handler.manejarStockInsuficiente(
-                new InsufficientStockException(1L, 3, 10), request);
+    void manejaStockInsuficienteComo422() {
+        ResponseEntity<ErrorResponse> respuesta = manejador.manejarStockInsuficiente(
+                new InsufficientStockException(1L, 3, 10), peticion);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
-        assertThat(response.getBody().getMessage()).contains("disponible=3");
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
+        assertThat(respuesta.getBody().getMessage()).contains("disponible=3");
     }
 
     @Test
-    void handlesValidationErrorsAs400() {
+    void manejaErroresDeValidacionComo400() {
         BindingResult bindingResult = mock(BindingResult.class);
         FieldError fieldError = new FieldError("movementRequest", "quantity", "quantity debe ser mayor a 0");
         when(bindingResult.getFieldErrors()).thenReturn(List.of(fieldError));
         MethodArgumentNotValidException ex = new MethodArgumentNotValidException(
                 mock(org.springframework.core.MethodParameter.class), bindingResult);
 
-        ResponseEntity<ErrorResponse> response = handler.manejarValidacion(ex, request);
+        ResponseEntity<ErrorResponse> respuesta = manejador.manejarValidacion(ex, peticion);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().getMessage()).contains("quantity debe ser mayor a 0");
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(respuesta.getBody().getMessage()).contains("quantity debe ser mayor a 0");
     }
 
     @Test
-    void handlesRateLimitExceededAs429() {
+    void manejaLimiteDePeticionesExcedidoComo429() {
         RateLimiter rateLimiter = RateLimiter.ofDefaults("movementHistory");
         RequestNotPermitted ex = RequestNotPermitted.createRequestNotPermitted(rateLimiter);
 
-        ResponseEntity<ErrorResponse> response = handler.manejarLimiteExcedido(ex, request);
+        ResponseEntity<ErrorResponse> respuesta = manejador.manejarLimiteExcedido(ex, peticion);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @Test
-    void handlesCircuitBreakerOpenAs503() {
+    void manejaCircuitoAbiertoComo503() {
         CallNotPermittedException ex = CallNotPermittedException.createCallNotPermittedException(
                 io.github.resilience4j.circuitbreaker.CircuitBreaker.ofDefaults("alertsService"));
 
-        ResponseEntity<ErrorResponse> response = handler.manejarCircuitoAbierto(ex, request);
+        ResponseEntity<ErrorResponse> respuesta = manejador.manejarCircuitoAbierto(ex, peticion);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @Test
-    void handlesGenericExceptionAs500() {
-        ResponseEntity<ErrorResponse> response = handler.manejarGenerico(new RuntimeException("boom"), request);
+    void manejaExcepcionGenericaComo500() {
+        ResponseEntity<ErrorResponse> respuesta = manejador.manejarGenerico(new RuntimeException("boom"), peticion);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        assertThat(response.getBody().getMessage()).contains("boom");
+        assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(respuesta.getBody().getMessage()).contains("boom");
     }
 }
