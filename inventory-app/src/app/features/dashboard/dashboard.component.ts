@@ -54,7 +54,10 @@ export class DashboardComponent implements OnInit {
   ]);
 
   ngOnInit(): void {
-    this.store.cargarProductos();
+    // El dashboard necesita el catalogo completo (no solo una pagina) para que el KPI de
+    // valor total y el desglose por categoria reflejen todos los productos, no solo los
+    // primeros N. La vista de Productos vuelve a pedir su propia pagina al navegar ahi.
+    this.store.cargarProductos(0, 100);
     this.store.cargarAlertas();
   }
 }
