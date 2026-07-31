@@ -1,62 +1,49 @@
-<div class="p-6 flex flex-col gap-6">
-  <h1 class="text-2xl font-semibold text-surface-900">Dashboard de inventario</h1>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <p-card styleClass="border-l-4 border-blue-500">
-      <div class="flex flex-col gap-1">
-        <span class="text-sm text-surface-500">Total de productos</span>
-        <span class="text-3xl font-bold">{{ store.totalProducts() }}</span>
+<div class="p-8 flex flex-col gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    @for (kpi of kpis(); track kpi.label) {
+      <div class="bg-surface-0 rounded-xl border border-surface-200 shadow-sm p-5 flex items-start justify-between hover:shadow-md transition-shadow">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm text-surface-500 font-medium">{{ kpi.label }}</span>
+          <span class="text-3xl font-bold text-surface-900">{{ kpi.value }}</span>
+          @if (kpi.hint) {
+            <span class="text-xs" [style.color]="kpi.color">{{ kpi.hint }}</span>
+          }
+        </div>
+        <span
+          class="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
+          [style.background]="kpi.color + '1a'"
+        >
+          <i class="pi {{ kpi.icon }} text-lg" [style.color]="kpi.color"></i>
+        </span>
       </div>
-    </p-card>
-
-    <p-card styleClass="border-l-4 border-amber-500">
-      <div class="flex flex-col gap-1">
-        <span class="text-sm text-surface-500">Alertas activas</span>
-        <span class="text-3xl font-bold">{{ store.totalAlerts() }}</span>
-      </div>
-    </p-card>
-
-    <p-card styleClass="border-l-4 border-red-500">
-      <div class="flex flex-col gap-1">
-        <span class="text-sm text-surface-500">Alertas criticas</span>
-        <span class="text-3xl font-bold">{{ store.totalCriticalAlerts() }}</span>
-      </div>
-    </p-card>
-
-    <p-card styleClass="border-l-4 border-green-500">
-      <div class="flex flex-col gap-1">
-        <span class="text-sm text-surface-500">Valor total de inventario</span>
-        <span class="text-3xl font-bold">{{ store.totalInventoryValue() | currency }}</span>
-      </div>
-    </p-card>
+    }
   </div>
 
-  @if (store.loading()) {
-    <p class="text-surface-500">Cargando productos...</p>
-  }
-
   @if (store.error()) {
-    <p class="text-red-600">{{ store.error() }}</p>
+    <div class="rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm flex items-center gap-2">
+      <i class="pi pi-exclamation-triangle"></i>
+      {{ store.error() }}
+    </div>
   }
 
-  <div class="min-h-[10rem]">
+  <div class="bg-surface-0 rounded-xl border border-surface-200 shadow-sm p-6 min-h-[12rem]">
     @defer (on viewport) {
       <app-advanced-stats />
     } @placeholder {
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-3">
         <p-skeleton height="1.5rem" width="14rem" />
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <p-skeleton height="6rem" />
-          <p-skeleton height="6rem" />
-          <p-skeleton height="6rem" />
+          <p-skeleton height="7rem" borderRadius="0.75rem" />
+          <p-skeleton height="7rem" borderRadius="0.75rem" />
+          <p-skeleton height="7rem" borderRadius="0.75rem" />
         </div>
       </div>
     } @loading (minimum 300ms) {
-      <div class="flex justify-center py-8">
-        <p-progressSpinner styleClass="w-10 h-10" />
+      <div class="flex justify-center py-10">
+        <p-progressSpinner styleClass="w-10 h-10" strokeWidth="4" />
       </div>
     } @error {
-      <p class="text-red-600">No se pudieron cargar las estadisticas avanzadas.</p>
+      <p class="text-red-600 text-sm">No se pudieron cargar las estadisticas avanzadas.</p>
     }
   </div>
 </div>

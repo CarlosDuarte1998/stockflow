@@ -17,6 +17,12 @@ const STATUS_SEVERITY: Record<StockStatus, 'success' | 'warn' | 'danger'> = {
   CRITICO: 'danger'
 };
 
+const STATUS_ICON: Record<StockStatus, string> = {
+  OK: 'pi pi-check',
+  BAJO: 'pi pi-exclamation-circle',
+  CRITICO: 'pi pi-times-circle'
+};
+
 @Component({
   selector: 'app-products',
   standalone: true,
@@ -71,5 +77,9 @@ export class ProductsComponent implements OnInit {
 
   severityOf(product: Product) {
     return STATUS_SEVERITY[this.statusOf(product)];
+  }
+
+  iconOf(product: Product): string {
+    return STATUS_ICON[this.statusOf(product)];
   }
 }

@@ -1,44 +1,64 @@
-<div class="p-6 max-w-lg">
-  <h1 class="text-2xl font-semibold text-surface-900 mb-4">Registrar movimiento</h1>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-1">
-      <label for="productId" class="text-sm font-medium text-surface-700">ID del producto</label>
-      <p-inputNumber
-        inputId="productId"
-        formControlName="productId"
-        [showButtons]="false"
-        [useGrouping]="false"
-      />
-      @if (form.controls.productId.invalid && form.controls.productId.touched) {
-        <span class="text-red-600 text-xs">El id del producto es obligatorio.</span>
-      }
+<div class="p-8">
+  <div class="max-w-xl bg-surface-0 rounded-xl border border-surface-200 shadow-sm p-6">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center">
+        <i class="pi pi-arrow-right-arrow-left text-primary-600"></i>
+      </span>
+      <div>
+        <h2 class="font-semibold text-surface-900">Nuevo movimiento de stock</h2>
+        <p class="text-sm text-surface-500">Registra una entrada o salida de inventario.</p>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="type" class="text-sm font-medium text-surface-700">Tipo de movimiento</label>
-      <p-select inputId="type" [options]="types" optionLabel="label" optionValue="value" formControlName="type" />
-    </div>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="productId" class="text-sm font-medium text-surface-700">ID del producto</label>
+        <p-inputNumber
+          inputId="productId"
+          formControlName="productId"
+          [showButtons]="false"
+          [useGrouping]="false"
+          placeholder="Ej. 3"
+          styleClass="w-full"
+        />
+        @if (form.controls.productId.invalid && form.controls.productId.touched) {
+          <span class="text-red-600 text-xs flex items-center gap-1">
+            <i class="pi pi-exclamation-circle"></i> El id del producto es obligatorio.
+          </span>
+        }
+      </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="quantity" class="text-sm font-medium text-surface-700">Cantidad</label>
-      <p-inputNumber inputId="quantity" formControlName="quantity" [showButtons]="false" [useGrouping]="false" />
-      @if (form.controls.quantity.invalid && form.controls.quantity.touched) {
-        <span class="text-red-600 text-xs">La cantidad debe ser mayor a 0.</span>
-      }
-    </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-1">
+          <label for="type" class="text-sm font-medium text-surface-700">Tipo de movimiento</label>
+          <p-select inputId="type" [options]="types" optionLabel="label" optionValue="value" formControlName="type" styleClass="w-full" />
+        </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="reason" class="text-sm font-medium text-surface-700">Motivo</label>
-      <input id="reason" type="text" pInputText formControlName="reason" placeholder="Ej. Venta a cliente" />
-    </div>
+        <div class="flex flex-col gap-1">
+          <label for="quantity" class="text-sm font-medium text-surface-700">Cantidad</label>
+          <p-inputNumber inputId="quantity" formControlName="quantity" [showButtons]="false" [useGrouping]="false" placeholder="0" styleClass="w-full" />
+          @if (form.controls.quantity.invalid && form.controls.quantity.touched) {
+            <span class="text-red-600 text-xs flex items-center gap-1">
+              <i class="pi pi-exclamation-circle"></i> Debe ser mayor a 0.
+            </span>
+          }
+        </div>
+      </div>
 
-    <button
-      pButton
-      type="submit"
-      label="Registrar movimiento"
-      [loading]="submitting()"
-      [disabled]="submitting() || form.invalid"
-    ></button>
-  </form>
+      <div class="flex flex-col gap-1">
+        <label for="reason" class="text-sm font-medium text-surface-700">Motivo</label>
+        <input id="reason" type="text" pInputText formControlName="reason" placeholder="Ej. Venta a cliente" class="w-full" />
+      </div>
+
+      <button
+        pButton
+        type="submit"
+        label="Registrar movimiento"
+        icon="pi pi-check"
+        [loading]="submitting()"
+        [disabled]="submitting() || form.invalid"
+        class="w-full mt-2"
+      ></button>
+    </form>
+  </div>
 </div>

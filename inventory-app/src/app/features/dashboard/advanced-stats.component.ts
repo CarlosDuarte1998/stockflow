@@ -1,6 +1,6 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { CardModule } from 'primeng/card';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 import { InventoryStore } from '../../core/store/inventory.store';
 
@@ -9,19 +9,20 @@ interface CategoryBreakdown {
   productCount: number;
   totalStock: number;
   totalValue: number;
+  valueShare: number;
 }
 
 @Component({
   selector: 'app-advanced-stats',
   standalone: true,
-  imports: [CardModule, CurrencyPipe, DecimalPipe],
+  imports: [ProgressBarModule, CurrencyPipe, DecimalPipe],
   templateUrl: './advanced-stats.component.html'
 })
 export class AdvancedStatsComponent {
   private readonly store = inject(InventoryStore);
 
   protected readonly breakdown = computed<CategoryBreakdown[]>(() => {
-    const byCategory = new Map<string, CategoryBreakdown>();
+    const byCategory = new Map<string, Omit<CategoryBreakdown, 'valueShare'>>();
 
     for (const product of this.store.products()) {
       const entry = byCategory.get(product.category) ?? {
@@ -36,7 +37,14 @@ export class AdvancedStatsComponent {
       byCategory.set(product.category, entry);
     }
 
-    return [...byCategory.values()].sort((a, b) => b.totalValue - a.totalValue);
+    const grandTotal = [...byCategory.values()].reduce((sum, entry) => sum + entry.totalValue, 0);
+
+    return [...byCategory.values()]
+      .map((entry) => ({
+        ...entry,
+        valueShare: grandTotal > 0 ? (entry.totalValue / grandTotal) * 100 : 0
+      }))
+      .sort((a, b) => b.totalValue - a.totalValue);
   });
 
   protected readonly averageStockPerProduct = computed(() => {
