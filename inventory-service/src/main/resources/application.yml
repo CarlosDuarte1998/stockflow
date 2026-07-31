@@ -28,6 +28,11 @@ spring:
       ddl-auto: create-drop
     defer-datasource-initialization: true
     show-sql: false
+    # API puramente REST, sin renderizado de vistas server-side: no hay razon para mantener la
+    # sesion de Hibernate abierta durante toda la request (patron Open Session In View). Los
+    # controllers ya devuelven DTOs armados dentro de la capa de servicio, asi que deshabilitarlo
+    # es seguro y evita el warning + el riesgo de queries N+1 ocultas fuera de la transaccion.
+    open-in-view: false
 
   sql:
     init:
